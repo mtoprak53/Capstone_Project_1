@@ -13,7 +13,7 @@ from fatsecret import Fatsecret
 # MY MODULES
 from forms import UserAddForm, LoginForm
 from models import db, connect_db, Food, FoodInfo, FoodLog, User, UserInfo
-from hidden import CONSUMER_KEY, CONSUMER_SECRET
+from hidden import CONSUMER_KEY, CONSUMER_SECRET, DATABASE_URL
 
 # TODAY = date.today()
 
@@ -29,7 +29,7 @@ FOOD_KEY = "food"
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    os.environ.get("DATABASE_URL", "postgresql:///calorie_db_2")
+    os.environ.get(DATABASE_URL, "postgresql:///calorie_db_2")
 )
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
