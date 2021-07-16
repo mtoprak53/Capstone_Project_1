@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block body_class %}{% endblock %}
+
+
+{% block content %}
+
+<h1>HERE GONNA GO FOODS TO ADD !!!</h1>
+
+<div class="m-3">
+
+  <h2>Search Food to Add on 
+    {{ the_date.strftime("%B ") }}    
+    {% if the_date.day in (1, 21, 31) %}
+      {{ the_date.day }}<sup>st</sup>
+    {% elif the_date.day in (2, 22) %}
+      {{ the_date.day }}<sup>nd</sup>
+    {% else %}
+      {{ the_date.day }}<sup>th</sup>
+    {% endif %}
+    {{ the_date.strftime("%Y / %A") }}
+    List.</h2>
+  
+  <form action="/food-search" method="POST" id="search-form">
+    <input name="food" type="text" class="w-75" placeholder="Enter Food">
+    <button class="btn btn-sm btn-primary px-3">Search</button>
+  </form>
+  
+</div>
+
+{% endblock %}

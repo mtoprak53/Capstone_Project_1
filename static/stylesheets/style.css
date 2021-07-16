@@ -1,0 +1,17 @@
+
+/* SCAFFOLDING */
+div {
+  /* border: 1px solid maroon; */
+}
+
+.tiny-image {
+  max-width: 30px
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.disabled {
+  pointer-events: none;
+}

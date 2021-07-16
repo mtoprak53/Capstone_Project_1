@@ -1,0 +1,64 @@
+{% extends 'base_left.html' %}
+
+{% block right_column %}
+
+<!-- RIGHT COLUMN -->
+<div class="right-col col">
+
+  <h1>
+    Add Food for 
+    {{ the_date.strftime("%B ") }}    
+    {% if the_date.day in (1, 21, 31) %}
+      {{ the_date.day }}<sup>st</sup>
+    {% elif the_date.day in (2, 22) %}
+      {{ the_date.day }}<sup>nd</sup>
+    {% else %}
+      {{ the_date.day }}<sup>th</sup>
+    {% endif %}
+    {{ the_date.strftime("%Y / %A") }}
+    List
+  </h1>
+
+  <div>
+
+    <h1>
+      {{ food_info['food_name'] }}, 
+            
+      <!-- BRAND OR GENERIC -->
+      {% if food_info['food_type'].lower() == "brand" %}
+        {{ food_info['brand_name'] }}
+      {% else %}
+        {{ food_info['food_type'] }}
+      {% endif %}
+    
+      HAS {{ unit_kcal }} KCALS IN {{ unit_amount }}.
+    </h1>
+    
+
+    <form action="/food/add/{{ food_info['food_id'] }}" method="POST" id="add-food-form">
+      <input name="amount" 
+             type="number" 
+             step="0.1"
+             min="0.1"
+             placeholder="Enter Amount">
+
+      <!-- <label for="serving-select">Choose a serving description:</label> -->
+      <select name="servings" id="serving-select">
+        <option value="">--Serving--</option>
+        {% for SD in SDs %}
+          {% if SD == '100 g' %}
+            <option value="{{ SD }}" selected>grams</option>
+          {% else %}
+            <option value="{{ SD }}">{{ SD }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+
+      <button class="btn btn-sm btn-primary px-3">Add</button>
+    </form>    
+
+  </div>
+
+</div>
+
+{% endblock %}

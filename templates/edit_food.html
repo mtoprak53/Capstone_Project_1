@@ -1,0 +1,49 @@
+{% extends 'base_left.html' %}
+
+{% block right_column %}
+
+<!-- RIGHT COLUMN -->
+<div class="right-col col">
+
+  <h1>
+    Add Food for 
+    {{ the_date.strftime("%B ") }}    
+    {% if the_date.day in (1, 21, 31) %}
+      {{ the_date.day }}<sup>st</sup>
+    {% elif the_date.day in (2, 22) %}
+      {{ the_date.day }}<sup>nd</sup>
+    {% else %}
+      {{ the_date.day }}<sup>th</sup>
+    {% endif %}
+    {{ the_date.strftime("%Y / %A") }}
+    List
+  </h1>
+
+  <div>
+
+    <h1>
+      {{ log.food.name }}, 
+            
+      {{ log.food.brand }}
+    
+      HAS {{ unit_kcal }} KCALS IN {{ unit_amount }}.
+    </h1>
+    
+
+    <form action="/food/log/{{ log.id }}/edit" method="POST" id="edit-food-form">
+      <input name="amount" type="number" class="" placeholder="Enter Amount">
+
+      {% if log.serving_description == '100 g' %}
+        <span>grams</span>
+      {% else %}
+        <span>{{ log.serving_description }}</span>
+      {% endif %}
+
+      <button class="btn btn-sm btn-success px-3">Edit</button>
+    </form>    
+
+  </div>
+
+</div>
+
+{% endblock %}

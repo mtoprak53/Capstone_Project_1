@@ -1,0 +1,30 @@
+{% extends 'base_left.html' %}
+
+{% block right_column %}
+
+<!-- RIGHT COLUMN -->
+
+<div class="right-col col">
+
+  <div class="mt-5">
+    <form action="/calendar" method="POST">
+      <!-- <div class="form-row"> -->
+        <div class="d-flex justify-content-around">
+          <div>
+            <!-- LABEL-FOR INPUT-ID SHOULD MATCH -->
+            <label for="chosen_date">DATE</label>
+            <input type="date" name="chosen_date" id="chosen_date">
+            <!-- FLASK GOT THE FORM INPUT BY NAME -->
+          </div>
+          <div>
+            <button type="submit" class="btn btn-primary">Travel the Time</button>
+          </div>
+        </div>
+  
+      <!-- </div> -->
+    </form>
+  </div>
+
+</div>
+
+{% endblock %}

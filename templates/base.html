@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- HEAD -->
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CALORIE COUNTER</title>
+
+  <!-- BOOTSTRAP -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  
+  <!-- JQUERY -->
+  <script src="https://unpkg.com/jquery"></script>
+
+  <!-- POPPER -->
+  <script src="https://unpkg.com/popper"></script>
+
+  <!-- MORE BOOTSTRAP -->
+  <!-- <script src="https://unpkg.com/bootstrap"></script> -->
+
+  <!-- FONTAWESOME -->
+  <link rel="stylesheet"
+        href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+  
+  <!-- MY STYLE -->
+  <link rel="stylesheet" href="/static/stylesheets/style.css">
+
+  <!-- FAVICON -->
+  <link rel="shortcut icon" href="/static/favicon.ico">
+</head>
+
+<!-- BODY -->
+<body class="{% block body_class %}{% endblock %}">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand bg-light">
+
+    <!-- NAVBAR CONTAINER -->
+    <div class="container-fluid">
+
+      <!-- NAVBAR HEADER -->
+      <div class="navbar-header">
+        <a href="/" class="navbar-brand text-secondary font-weight-bold">
+          <img src="/static/images/scale-logo.jpg" alt="logo" class="tiny-image">
+          <span>Calorie Counter</span>
+        </a>
+      </div>
+
+      <!-- NAV -->
+      <ul class="nav navbar-nav navbar-right">
+
+        <!-- ANONYMOUS VISIT -->
+        {% if not g.user %}
+        <li><a href="/signup" class="pl-3">Sign Up</a></li>
+        <li><a href="/login" class="pl-3">Login</a></li>
+
+        <!-- LOGGED IN VISIT -->
+        {% else %}
+        <li>
+          <a href="/users/{{ g.user.id }}" class="text-secondary font-weight-bold">
+            <img src="{{ g.user.image_url }}" alt="{{ g.user.username }}">
+            <span>{{ g.user.username }}</span>
+          </a>
+        </li>
+        <li><a href="/logout" class="pl-3">Logout</a></li>
+
+        {% endif %}
+      </ul>
+
+    </div>
+
+  </nav>
+
+  <!-- CONTAINER -->
+  <div class="container">
+
+    <!-- FLASH MESSAGES -->
+    {% for category, message in get_flashed_messages(with_categories=True) %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+
+    <!-- CONTENT -->
+    {% block content %}
+    {% endblock %}
+  </div>
+
+  <script src="/static/scripts/app.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+
+  <div class="row">
+
+    <!-- LEFT COLUMN -->
+    <div class="left-col col">
+
+      <div class="home-hero m-3">
+        <h1>Welcome back, {{ user.username }}!</h1>
+      </div>
+
+      <div class="m-3">
+        <h1>
+          Today is 
+          {{ today.strftime("%B ") }}    
+          {% if today.day in (1, 21, 31) %}
+            {{ today.day }}<sup>st</sup>
+          {% elif today.day in (2, 22) %}
+            {{ today.day }}<sup>nd</sup>
+          {% else %}
+            {{ today.day }}<sup>th</sup>
+          {% endif %}
+          {{ today.strftime("%Y / %A") }}
+          <span>
+            <a class="btn btn-lg btn-primary mx-5 text-white"
+                href="/calendar">
+              GO TO CALENDAR
+            </a>
+          </span>
+        </h1>
+
+      </div>
+
+      <div class="food-search-form m-3">
+
+        <h2>Search Food to Add into the List</h2>  
+        
+        <form action="/food/search" method="POST" id="search-form">
+          <input name="food" type="text" class="w-75" placeholder="Enter Food">
+          <button class="btn btn-sm btn-primary px-3">Search</button>
+        </form>
+        
+      </div>
+      
+      <div class="freq-button m-3">
+        <a href="/food/frequent" class="disabled btn btn-block btn-primary">
+          Most Frequent Eaten 20 Foods
+        </a>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    {% block right_column %}
+    {% endblock %}
+
+  </div>
+</div>
+
+{% endblock %}
