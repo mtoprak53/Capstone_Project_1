@@ -13,7 +13,10 @@ from fatsecret import Fatsecret
 # MY MODULES
 from forms import UserAddForm, LoginForm
 from models import db, connect_db, Food, FoodInfo, FoodLog, User, UserInfo
-from hidden import CONSUMER_KEY, CONSUMER_SECRET, DATABASE_URL
+try:
+    from hidden import CONSUMER_KEY, CONSUMER_SECRET, DATABASE_URL
+except:
+    pass
 
 # TODAY = date.today()
 
