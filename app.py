@@ -42,6 +42,9 @@ app.config["SQLALCHEMY_DATABASE_URI"] = (
     )
 )
 
+# HEROKU FIX
+app.config["SQLALCHEMY_DATABASE_URI"] = app.config["SQLALCHEMY_DATABASE_URI"].replace("postgres://", "postgresql://", 1)
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = True
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
@@ -642,7 +645,13 @@ def show_test():
     """
     """
 
-    return jsonify(os.environ)
+    print(os.environ)
+    print(type(os.environ))
+    print("#"*30)
+    [print(f"{k}  ==>>  {v}") for k,v in os.environ.items()]
+    print("#"*30)
+
+    return "X"
 
 
 ####################################################################################
