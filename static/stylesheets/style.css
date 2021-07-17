@@ -15,3 +15,18 @@ div {
 .disabled {
   pointer-events: none;
 }
+
+.left-col, .right-col {
+  border: 1px solid turquoise;
+  border-radius: 10px;
+}
+
+.day-nav {
+  border: 1px solid lightseagreen;
+  border-radius: 5px;
+  margin: 0 5px;
+}
+
+.greeting, .todays-date, .food-search-form {
+  border-bottom: 1px solid lightsteelblue;
+}

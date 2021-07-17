@@ -46,7 +46,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = (
 app.config["SQLALCHEMY_DATABASE_URI"] = app.config["SQLALCHEMY_DATABASE_URI"].replace("postgres://", "postgresql://", 1)
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_ECHO"] = True
+app.config["SQLALCHEMY_ECHO"] = False   # SWITCHED
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 # app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", API_SECRET_KEY)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "top_secret")
@@ -55,13 +55,13 @@ toolbar = DebugToolbarExtension(app)
 connect_db(app)
 
 CONSUMER_KEY = os.environ.get(
-    "CONSUMER_KEY",
-    CONSUMER_KEY
+    "CONSUMER_KEY",   # REMOTE
+    CONSUMER_KEY      # LOCAL
 )
 
 CONSUMER_SECRET = os.environ.get(
-    "CONSUMER_SECRET",
-    CONSUMER_SECRET
+    "CONSUMER_SECRET",   # REMOTE
+    CONSUMER_SECRET      # LOCAL
 )
 
 fs = Fatsecret(CONSUMER_KEY, CONSUMER_SECRET)
@@ -187,7 +187,7 @@ def logout():
 ####################################################################################
 # 
 
-@app.route('/home', methods=["GET", "POST"])
+@app.route('/home')
 def homepage():
     """We start here!"""
 
@@ -197,7 +197,18 @@ def homepage():
     
     # FIND OUT THE DATE
     TODAY = date.today()
+
+    # BASH PRINT TEST
+    print("#"*30)
+    print(f"'/home' TODAY => {TODAY} - {type(TODAY)}")
+    print("#"*30)
+
     THE_DATE = load_the_date()
+
+    # BASH PRINT TEST
+    print("#"*30)
+    print(f"'/home' THE_DATE => {THE_DATE} - {type(THE_DATE)}")
+    print("#"*30)
 
     # BUILD THE EATEN LIST IF THERE IS ANY LOG
     if FoodLog.query.filter(
@@ -406,6 +417,7 @@ def add_food(food_id):
             calories /= 100
         
         foodlog = FoodLog(
+            date=THE_DATE,
             user_id=g.user.id,
             food_id=food_id,
             amount=amount,
@@ -566,8 +578,9 @@ def change_date():
 
     if request.form:
 
-        the_date = request.form["chosen_date"]
-        save_(the_date)
+        the_date = request.form["chosen_date"]   # STRING
+        THE_DATE = date.fromisoformat(the_date)  # OBJECT
+        save_(THE_DATE)
 
         return redirect('/home')
 
@@ -581,7 +594,7 @@ def change_date():
 
 @app.route('/day-change/<direction>/<int:days>')
 def change_day(direction, days):
-    """X"""
+    """Change the date."""
 
     # CHECK IF THE USER LOGGED IN
     if not session.get(CURR_USER_KEY):
@@ -589,7 +602,18 @@ def change_day(direction, days):
 
     # FIND OUT THE DATE
     TODAY = date.today()
+
+    # BASH PRINT TEST
+    print("#"*30)
+    print(f"'/day-change' TODAY => {TODAY} - {type(TODAY)}")
+    print("#"*30)
+
     THE_DATE = load_the_date()
+
+    # BASH PRINT TEST
+    print("#"*30)
+    print(f"'/day-change' THE_DATE (start) => {THE_DATE} - {type(THE_DATE)}")
+    print("#"*30)
 
     t1 = timedelta(days)
     if direction == 'post':
@@ -605,6 +629,11 @@ def change_day(direction, days):
         )
 
     save_(THE_DATE)
+
+    # BASH PRINT TEST
+    print("#"*30)
+    print(f"'/day-change' THE_DATE (end) => {THE_DATE} - {type(THE_DATE)}")
+    print("#"*30)
 
     return redirect('/home')
 
