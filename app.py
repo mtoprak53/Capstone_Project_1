@@ -67,7 +67,7 @@ CONSUMER_SECRET = os.environ.get(
 fs = Fatsecret(CONSUMER_KEY, CONSUMER_SECRET)
 
 # db.drop_all()
-# db.create_all()
+db.create_all()
 
 
 ####################################################################################
