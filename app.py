@@ -13,10 +13,14 @@ from fatsecret import Fatsecret
 # MY MODULES
 from forms import UserAddForm, LoginForm
 from models import db, connect_db, Food, FoodInfo, FoodLog, User, UserInfo
+
 try:
-    from hidden import CONSUMER_KEY, CONSUMER_SECRET, DATABASE_URL
+    # IF THERE IS A HIDDEN MODULE (LOCAL)
+    from hidden import CONSUMER_KEY, CONSUMER_SECRET
 except:
-    pass
+    # IF THERE IS NO HIDDEN MODULE (HEROKU)
+    CONSUMER_KEY = None
+    CONSUMER_SECRET = None
 
 # TODAY = date.today()
 
@@ -33,7 +37,7 @@ app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     os.environ.get(
-        DATABASE_URL,    # IF THERE IS AN ENV_VAR
+        "DATABASE_URL",    # IF THERE IS AN ENV_VAR
         "postgresql:///calorie_db_2"   # LOCAL VAR
     )
 )
