@@ -3,7 +3,7 @@ import os
 from datetime import date, timedelta
 
 # FLASK MODULES
-from flask import Flask, redirect, render_template, request, flash, session, g, abort
+from flask import Flask, redirect, render_template, request, flash, session, g, abort, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError   # for already taken usernames
 
@@ -29,7 +29,10 @@ FOOD_KEY = "food"
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    os.environ.get(DATABASE_URL, "postgresql:///calorie_db_2")
+    os.environ.get(
+        DATABASE_URL,    # IF THERE IS AN ENV_VAR
+        "postgresql:///calorie_db_2"   # LOCAL VAR
+    )
 )
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -40,6 +43,16 @@ app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "top_secret")
 toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
+
+CONSUMER_KEY = os.environ.get(
+    "CONSUMER_KEY",
+    CONSUMER_KEY
+)
+
+CONSUMER_SECRET = os.environ.get(
+    "CONSUMER_SECRET",
+    CONSUMER_SECRET
+)
 
 fs = Fatsecret(CONSUMER_KEY, CONSUMER_SECRET)
 
@@ -615,6 +628,14 @@ def page_not_found(e):
         return redirect('/')
 
     return render_template('404.html'), 404
+
+
+@app.route('/test')
+def show_test():
+    """
+    """
+
+    return jsonify(os.environ)
 
 
 ####################################################################################
