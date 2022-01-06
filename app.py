@@ -14,11 +14,12 @@ from fatsecret import Fatsecret
 from forms import UserAddForm, LoginForm
 from models import db, connect_db, Food, FoodInfo, FoodLog, User, UserInfo
 
+# SENSITIVE DATA MANAGEMENT
 try:
-    # IF THERE IS A HIDDEN MODULE (LOCAL)
+    # IF THERE IS A HIDDEN FILE (LOCAL)
     from hidden import CONSUMER_KEY, CONSUMER_SECRET
 except:
-    # IF THERE IS NO HIDDEN MODULE (HEROKU)
+    # IF THERE IS NO HIDDEN FILE (HEROKU)
     CONSUMER_KEY = None
     CONSUMER_SECRET = None
 
@@ -35,6 +36,7 @@ FOOD_KEY = "food"
 
 app = Flask(__name__)
 
+# DATABASE CONNECTION
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     os.environ.get(
         "DATABASE_URL",    # IF THERE IS AN ENV_VAR
@@ -45,6 +47,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = (
 # HEROKU FIX
 app.config["SQLALCHEMY_DATABASE_URI"] = app.config["SQLALCHEMY_DATABASE_URI"].replace("postgres://", "postgresql://", 1)
 
+# OTHER CONFIGURATIONS
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = False   # SWITCHED
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
@@ -106,6 +109,13 @@ def save_(the_date):
     """Save the date."""
 
     session[DATE_KEY] = the_date.isoformat()
+
+def check_login():
+    if session.get(CURR_USER_KEY):
+        print("check login")
+        return False
+    return True
+        # return redirect('/')
 
 
 @app.route('/signup', methods=["GET", "POST"])
@@ -192,7 +202,10 @@ def homepage():
     """We start here!"""
 
     # CHECK IF THE USER LOGGED IN
-    if not session.get(CURR_USER_KEY):
+    # if not session.get(CURR_USER_KEY):
+    #     return redirect('/')
+
+    if check_login():
         return redirect('/')
     
     # FIND OUT THE DATE
@@ -273,7 +286,7 @@ def search_food():
 
     except:
         return render_template(
-            'error_food.html', 
+            '/errors/food.html', 
             user=g.user, 
             today=TODAY, 
             the_date=THE_DATE, 
@@ -321,7 +334,7 @@ def search_food_redirect(food, page_num):
         food_list=[food_list]
     
     return render_template(
-        'search_results.html', 
+        '/foods/search.html', 
         user=g.user, 
         today=TODAY,
         the_date=THE_DATE,
@@ -404,7 +417,7 @@ def add_food(food_id):
             ).one()
         except:
             return render_template(
-                        'error_db.html', 
+                        '/errors/database.html', 
                         user=g.user, 
                         today=TODAY,
                         the_date=THE_DATE, 
@@ -432,7 +445,8 @@ def add_food(food_id):
         return redirect('/home')
 
 
-    # GET
+    # GET REQUEST PART ###
+    # --------------------
     food_info = fs.food_get(food_id)
     serving_val = food_info['servings']['serving']
     is_it_list = isinstance(serving_val, list)
@@ -458,7 +472,7 @@ def add_food(food_id):
     session[FOOD_KEY] = food_info
 
     return render_template(
-        'add_food.html', 
+        '/foods/add.html', 
         user=g.user, 
         today=TODAY, 
         the_date=THE_DATE,
@@ -497,11 +511,12 @@ def edit_food(log_id):
 
         return redirect('/home')
 
-    # GET METHOD
+    # GET REQUEST PART ###
+    # --------------------
     log = FoodLog.query.get_or_404(log_id)
 
     return render_template(
-                'edit_food.html',
+                '/foods/edit.html',
                 user=g.user, 
                 the_date=THE_DATE,
                 today=TODAY,
@@ -529,6 +544,7 @@ def delete_food(log_id):
 
 
 ### UNDER CONSTRUCTION ###
+# ---------------------- #
 @app.route('/food/frequent')
 def frequent_foods():
     """
@@ -561,6 +577,14 @@ def frequent_foods():
 
     foodlogs = [FoodLog.query.filter(FoodLog.user_id==g.user.id, FoodLog.food_id==fid).all() for fid in fids20]
 
+    return render_template(
+        '/foods/frequent.html',
+        user=g.user, 
+        today=TODAY,
+        the_date=THE_DATE,
+        foodlogs=foodlogs
+    )
+
 
 
 @app.route('/calendar', methods=["GET", "POST"])
@@ -585,7 +609,7 @@ def change_date():
         return redirect('/home')
 
     return render_template(
-        'choose_date.html', 
+        'calendar.html', 
         user=g.user, 
         today=TODAY,
         the_date=THE_DATE,
@@ -622,7 +646,7 @@ def change_day(direction, days):
         THE_DATE -= t1
     else:
         return render_template(
-            '/error_date.html',
+            '/errors/date.html',
             user=g.user, 
             today=TODAY,
             the_date=THE_DATE,
@@ -666,15 +690,16 @@ def page_not_found(e):
     if not session.get(CURR_USER_KEY):
         return redirect('/')
 
-    return render_template('404.html'), 404
+    return render_template('/errors/404.html'), 404
 
 
 @app.route('/test')
 def show_test():
-    """
+    """ A test route to print all os.environ data on the terminal
     """
 
-    print(os.environ)
+    print("#"*30)
+    # print(os.environ)
     print(type(os.environ))
     print("#"*30)
     [print(f"{k}  ==>>  {v}") for k,v in os.environ.items()]

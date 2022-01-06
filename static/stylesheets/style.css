@@ -1,7 +1,17 @@
 
 /* SCAFFOLDING */
-div {
-  /* border: 1px solid maroon; */
+/* div {
+  border: 1px solid maroon;
+} */
+
+* {
+  /* background-color: #ffffdd; */
+  /* background-color: #e3f2fd; */
+  /* background-color: lightgreen; */
+}
+
+.btn {
+  /* background-color: none; */
 }
 
 .tiny-image {
@@ -16,7 +26,7 @@ div {
   pointer-events: none;
 }
 
-.left-col, .right-col {
+.left-col, .right-col, .calendar {
   border: 1px solid turquoise;
   border-radius: 10px;
 }

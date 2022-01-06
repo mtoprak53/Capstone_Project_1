@@ -44,7 +44,7 @@
 
       <!-- <label for="serving-select">Choose a serving description:</label> -->
       <select name="servings" id="serving-select">
-        <option value="">--Serving--</option>
+        <option value="" disabled>--Serving--</option>
         {% for SD in SDs %}
           {% if SD == '100 g' %}
             <option value="{{ SD }}" selected>grams</option>
