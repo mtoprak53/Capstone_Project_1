@@ -288,10 +288,10 @@ class User(db.Model):
 
 
     ###   MODIFY THIS   ###
-    # def __repr__(self):
-    #     """Show info about the user."""
+    def __repr__(self):
+        """Show info about the user."""
         
-    #     return f"<User #{self.id}: {self.username}, {self.password}>"
+        return f"<User #{self.id}: {self.username}>"
 
 
     @classmethod

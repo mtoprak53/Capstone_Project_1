@@ -10,8 +10,17 @@
   /* background-color: lightgreen; */
 }
 
+td, th {
+  margin: 10px;
+}
+
 .btn {
   /* background-color: none; */
+}
+
+.link-button {
+  height: 30px;
+  width: 40px;
 }
 
 .tiny-image {

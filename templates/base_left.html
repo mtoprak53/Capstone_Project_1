@@ -25,6 +25,8 @@
             {{ today.day }}<sup>st</sup>
           {% elif today.day in (2, 22) %}
             {{ today.day }}<sup>nd</sup>
+          {% elif the_date.day in (3, 23) %}
+            {{ the_date.day }}<sup>rd</sup>
           {% else %}
             {{ today.day }}<sup>th</sup>
           {% endif %}
@@ -68,7 +70,7 @@
       </div>
       
       <div class="freq-button m-3">
-        <a href="/food/frequent" class="disabled btn btn-block btn-primary">
+        <a href="/food/frequent" class="btn btn-block btn-primary">
           Most Frequent Eaten 20 Foods
         </a>
       </div>

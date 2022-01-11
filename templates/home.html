@@ -13,6 +13,7 @@
     <a href="/day-change/pre/1">
       <i class="fas fa-step-backward"></i>
     </a>
+    <a href="/">TODAY</a>
     <a href="/day-change/post/1">
       <i class="fas fa-step-forward"></i>
     </a>
@@ -30,6 +31,8 @@
         {{ the_date.day }}<sup>st</sup>
       {% elif the_date.day in (2, 22) %}
         {{ the_date.day }}<sup>nd</sup>
+        {% elif the_date.day in (3, 23) %}
+          {{ the_date.day }}<sup>rd</sup>
       {% else %}
         {{ the_date.day }}<sup>th</sup>
       {% endif %}
@@ -79,51 +82,60 @@
       </span>
     </div>
 
-    <!-- TABLE -->
-    <form>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">&nbsp&nbspFOOD&nbsp&nbsp</th>
-            <th scope="col">BRAND</th>
-            <th scope="col">AMNT</th>
-            <th scope="col">&nbsp&nbspUNIT&nbsp&nbsp</th>
-            <th scope="col">KCAL</th>
-            <th scope="col">CHANGE</th>
-          </tr>
-        </thead>
-        <tbody>
+    <!-- NO FOOD LOG YET -->
+    {% if not foodlog %}
+      <h3 class="m-5 text-center">Nothing eaten yet!</h3>
 
-          <!-- EATEN LIST CONSTRUCTOR FOR LOOP -->
-          {% for item in foodlog %}
-          <tr>
-            <th scope="row">{{ foodlog.index(item) + 1}}</th>
-            <td>{{ item.food.name }}</td>
-            <td>{{ item.food.brand }}</td>
-            <td>{{ item.amount }}</td>
-            {% if item.serving_description == '100 g' %}
-              <td>grams</td>
-            {% else %}
-              <td>{{ item.serving_description }}</td>
-            {% endif %}
-            <td>{{ item.calories }}</td>
-            <td>
-              <button class="btn btn-sm btn-outline-primary"
-                      formmethod="GET"
-                      formaction="food/log/{{ item.id }}/edit">E
-              </button>
-              <button class="btn btn-sm btn-outline-danger"
-                      formmethod="POST"
-                      formaction="food/log/{{ item.id }}/delete">X
-              </button>
-            </td>
-          </tr>
-          {% endfor %}
-          
-        </tbody>
-      </table>
-    </form>
+    <!-- THERE IS EATEN SOMETHING -->
+    {% else %}
+
+      <!-- TABLE -->
+      <form>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">&nbsp&nbspFOOD&nbsp&nbsp</th>
+              <th scope="col">BRAND</th>
+              <th scope="col">AMNT</th>
+              <th scope="col">&nbsp&nbspUNIT&nbsp&nbsp</th>
+              <th scope="col">KCAL</th>
+              <th scope="col">CHANGE</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- EATEN LIST CONSTRUCTOR FOR LOOP -->
+            {% for item in foodlog %}
+            <tr>
+              <th scope="row">{{ foodlog.index(item) + 1}}</th>
+              <td>{{ item.food.name }}</td>
+              <td>{{ item.food.brand }}</td>
+              <td>{{ item.amount }}</td>
+              {% if item.serving_description == '100 g' %}
+                <td>grams</td>
+              {% else %}
+                <td>{{ item.serving_description }}</td>
+              {% endif %}
+              <td>{{ item.calories }}</td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary"
+                        formmethod="GET"
+                        formaction="food/log/{{ item.id }}/edit">E
+                </button>
+                <button class="btn btn-sm btn-outline-danger"
+                        formmethod="POST"
+                        formaction="food/log/{{ item.id }}/delete">X
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+            
+          </tbody>
+        </table>
+      </form>
+
+    {% endif %}
 
   </div>
 

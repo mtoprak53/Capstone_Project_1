@@ -5,32 +5,39 @@
 <!-- RIGHT COLUMN -->
 <div class="right-col col">
 
-<h1>Most frequent eaten 20 foods</h1>
+<h1 class="text-center">Most frequent eaten 20 foods</h1>
 
 {# FOOD RESULTS #}
+{#
 <ol>
-  {% for food in foodlogs %}
-
-    <li>
-      {#
-      <a href="/food/add/{{ food['food_id'] }}">
-        {{ food['food_name'] }}, 
-        
-        <!-- BRAND OR GENERIC -->
-        {% if food['food_type'].lower() == "brand" %}
-          {{ food['brand_name'] }}
-        {% else %}
-          {{ food['food_type'] }}
-        {% endif %}
-        
-      </a>
-      <p class="text-info">({{ food['food_description'] }})</p>
-      #}
-      {{ food }}
-    </li> 
-
+  {% for food in freq_20_foods %}
+    <li>{{ food }}</li>
   {% endfor %}
 </ol>
+#}
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Food Name</th>
+      <th scope="col">Food Brand</th>
+      <th scope="col">Count</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for food in freq_20_foods %}
+    <tr>
+      <th scope="row"><a class="btn btn-primary btn-sm link-button" href="">
+        <span class="text-center">{{ freq_20_foods.index(food) + 1}}</span>
+        </a></th>
+      <td>{{ food[0].name }}</td>
+      <td>{{ food[0].brand }}</td>
+      <td class="text-center">{{ food[1] }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
 {#
 <div class="result-pages-navigation mb-3">

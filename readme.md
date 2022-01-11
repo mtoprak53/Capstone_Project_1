@@ -4,7 +4,9 @@ The website, I am going to build, will be a nutrient and calorie content log of 
 
 Users would be able to create their accounts in the website with a username and password. When they login to their accounts they will be able to see their already entered food logs for each separate day. There will be a calender feature to make possible to browse through the days, for each corresponding food log. There will also be a feature to see nutrient and calorie sum/average for a period of time specified by the user.
 
-The user will be able to create, read, edit, and delete any food entry for any day. The database will contain two tables: [users & food_logs](https://docs.google.com/drawings/d/16HER8Z3KmN-mbUIALi8C0DKeYLNxTHT35uLNohaH2dk/edit?usp=sharing).
+<!-- The user will be able to create, read, edit, and delete any food entry for any day. The database will contain two tables: [users & food_logs](https://docs.google.com/drawings/d/16HER8Z3KmN-mbUIALi8C0DKeYLNxTHT35uLNohaH2dk/edit?usp=sharing). -->
+
+The user will be able to create, read, edit, and delete any food entry for any day. The database will contain four tables: [foodinfos | foods | foodlogs | users](/static/images/schema.jpeg).
 
 
 

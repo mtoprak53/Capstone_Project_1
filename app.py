@@ -110,13 +110,20 @@ def save_(the_date):
 
     session[DATE_KEY] = the_date.isoformat()
 
-def check_login():
-    if session.get(CURR_USER_KEY):
-        print("check login")
-        return False
-    return True
-        # return redirect('/')
 
+def logged_in():
+    print("check login")
+    if session.get(CURR_USER_KEY):
+        return True
+    return False
+
+
+def print_(date):
+    """Print todays date in bash"""
+    
+    print("#"*30)
+    print(f"'/home' TODAY => {date} - {type(date)}")
+    print("#"*30)
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
@@ -129,8 +136,8 @@ def signup():
     If  there already is a user with that username: flash message and re-present the form.
     """
 
-    if CURR_USER_KEY in session:
-        del session[CURR_USER_KEY]
+    do_logout()
+
     form = UserAddForm()
 
     if form.validate_on_submit():   # .validate_on_submit()
@@ -138,8 +145,6 @@ def signup():
             user = User.signup(   # .signup()
                 username=form.username.data,
                 password=form.password.data
-                # first_name=form.first_name.data,
-                # last_name=form.last_name.data,
             )
             db.session.commit()
             user_info = UserInfo(
@@ -201,27 +206,15 @@ def logout():
 def homepage():
     """We start here!"""
 
-    # CHECK IF THE USER LOGGED IN
-    # if not session.get(CURR_USER_KEY):
-    #     return redirect('/')
-
-    if check_login():
+    if not logged_in():
         return redirect('/')
     
-    # FIND OUT THE DATE
     TODAY = date.today()
+    print_(TODAY)
 
-    # BASH PRINT TEST
-    print("#"*30)
-    print(f"'/home' TODAY => {TODAY} - {type(TODAY)}")
-    print("#"*30)
-
+    # FIND OUT THE DATE
     THE_DATE = load_the_date()
-
-    # BASH PRINT TEST
-    print("#"*30)
-    print(f"'/home' THE_DATE => {THE_DATE} - {type(THE_DATE)}")
-    print("#"*30)
+    print_(THE_DATE)
 
     # BUILD THE EATEN LIST IF THERE IS ANY LOG
     if FoodLog.query.filter(
@@ -270,10 +263,8 @@ def homepage():
 
 @app.route('/food/search', methods=["POST"])
 def search_food():
-    """Redirect the search term as a query to the next route."""
 
-    # CHECK IF THE USER LOGGED IN
-    if not session.get(CURR_USER_KEY):
+    if not logged_in():
         return redirect('/')
     
     # FIND OUT THE DATE
@@ -302,8 +293,7 @@ def search_food_redirect(food, page_num):
     """
     """
 
-    # CHECK IF THE USER LOGGED IN
-    if not session.get(CURR_USER_KEY):
+    if not logged_in():
         return redirect('/')
     
     # FIND OUT THE DATE
@@ -350,8 +340,7 @@ def add_food(food_id):
     """takes the chosen food and calculates its values
     """
 
-    # CHECK IF THE USER LOGGED IN
-    if not session.get(CURR_USER_KEY):
+    if not logged_in():
         return redirect('/')
     
     # FIND OUT THE DATE
@@ -367,18 +356,13 @@ def add_food(food_id):
         food_id = int(foodinfo['food_id'])
 
         # DATABASE REGISTERING OF FOOD & ITS INFO #
+        # IF THE FOOD IS ALREADY IN DATABASE
         if Food.query.get(food_id):
-
-            # IF THE FOOD IS ALREADY IN DATABASE
             pass
 
+        # IF THE FOOD IS NOT IN DATABASE YET
         else:
-
-            # IF THE FOOD IS NOT IN DATABASE YET
-            if foodinfo.get('brand_name'):
-                brand = foodinfo.get('brand_name')
-            else:
-                brand = 'Generic'
+            brand = foodinfo.get('brand_name') if foodinfo.get('brand_name') else "Generic"
 
             food = Food(
                 id=food_id,
@@ -551,7 +535,7 @@ def frequent_foods():
     """
 
     # CHECK IF THE USER LOGGED IN
-    if not session.get(CURR_USER_KEY):
+    if not logged_in():
         return redirect('/')
 
     # FIND OUT THE DATE
@@ -559,30 +543,40 @@ def frequent_foods():
     THE_DATE = load_the_date()
 
     # USER'S ALL FOOD-LOGS
-    all_logs = FoodLog.query.filter_by(user_id=g.user.id).all()
+    # all_logs = FoodLog.query.filter_by(user_id=g.user.id).group_by(food_id).order_by(func.count().desc(), date.desc()).limit(20).all()
 
-    # FOOD-IDs OF USER'S FOOD-LOGS
-    food_ids = [log.food_id for log in all_logs]
-    fid_set = set(food_ids)
+    freq_20_foods = (db.session.query(Food, db.func.count(FoodLog.food_id))
+                                .join(FoodLog)
+                                .filter_by(user_id=g.user.id)
+                                .group_by(Food.id)
+                                .order_by(db.func.count(FoodLog.food_id).desc())
+                                .limit(20)
+                                .all())
 
-    # (FOOD-ID, FREQUENCY) TUPLES LIST
-    food_freq = [(fid, FoodLog.query.filter(FoodLog.user_id==g.user.id, FoodLog.food_id==fid).count()) for fid in fid_set]
 
-    # REVERSE SORTED (FOOD-ID, FREQUENCY) TUPLES LIST
-    ffs = sorted(food_freq, key=lambda x: x[1], reverse=True)
+    # # FOOD-IDs OF USER'S FOOD-LOGS
+    # food_ids = [log.food_id for log in all_logs]
+    # fid_set = set(food_ids)
 
-    fids20 = [t[0] for t in ffs[:20]]
+    # # (FOOD-ID, FREQUENCY) TUPLES LIST
+    # food_freq = [(fid, FoodLog.query.filter(FoodLog.user_id==g.user.id, FoodLog.food_id==fid).count()) for fid in fid_set]
 
-    # fidlogs = 
+    # # REVERSE SORTED (FOOD-ID, FREQUENCY) TUPLES LIST
+    # ffs = sorted(food_freq, key=lambda x: x[1], reverse=True)
 
-    foodlogs = [FoodLog.query.filter(FoodLog.user_id==g.user.id, FoodLog.food_id==fid).all() for fid in fids20]
+    # fids20 = [t[0] for t in ffs[:20]]
+
+    # # fidlogs = 
+
+    # foodlogs = [FoodLog.query.filter(FoodLog.user_id==g.user.id, FoodLog.food_id==fid).all() for fid in fids20]
 
     return render_template(
         '/foods/frequent.html',
         user=g.user, 
         today=TODAY,
         the_date=THE_DATE,
-        foodlogs=foodlogs
+        # foodlogs=foodlogs,
+        freq_20_foods=freq_20_foods,
     )
 
 

@@ -16,16 +16,6 @@ class UserAddForm(FlaskForm):
         validators=[Length(min=6)]
     )
 
-    # first_name = StringField(
-    #     'First Name',
-    #     validators=[Optional()]
-    # )
-
-    # last_name = StringField(
-    #     'Last Name',
-    #     validators=[Optional()]
-    # )
-
     calorie_need = IntegerField(
         'Daily Calorie Need',
         validators=[InputRequired()]
