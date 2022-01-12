@@ -20,7 +20,7 @@ class FoodLog(db.Model):
         db.Integer,
         primary_key = True
     )
-
+    
     user_id = db.Column(
         db.Integer,
         db.ForeignKey('users.id', ondelete="cascade")
