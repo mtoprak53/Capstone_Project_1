@@ -91,7 +91,7 @@ class Food(db.Model):
 
     def __repr__(self):
 
-        return f"Food Name: {self.name}, Type: {self.brand}"
+        return f"Food Name: {self.name} | Type: {self.brand}"
 
 
 class FoodInfo(db.Model):
@@ -238,28 +238,18 @@ class FoodInfo(db.Model):
         return f"FoodInfo for Food #{self.food_id} & serving description {self.serving_description} "
 
 
-class UserInfo(db.Model):
-    """User details."""
+# class UserInfo(db.Model):
+#     """User details."""
 
-    __tablename__ = 'userinfos'
+#     __tablename__ = 'userinfos'
 
-    user_id = db.Column(
-        db.Integer,
-        db.ForeignKey('users.id', ondelete='cascade'),
-        primary_key=True
-    )
+#     user_id = db.Column(
+#         db.Integer,
+#         db.ForeignKey('users.id', ondelete='cascade'),
+#         primary_key=True
+#     )
 
-    calorie_limit = db.Column(
-        db.Integer,
-        nullable=False
-    )
-
-    calorie_need = db.Column(
-        db.Integer,
-        nullable=False
-    )
-
-    user = db.relationship('User', backref="userinfo")
+#     user = db.relationship('User', backref="userinfo")
 
 
 class User(db.Model):
@@ -284,10 +274,16 @@ class User(db.Model):
         nullable=False
     )
 
+    calorie_limit = db.Column(
+        db.Integer,
+        nullable=False
+    )
 
+    calorie_need = db.Column(
+        db.Integer,
+        nullable=False
+    )
 
-
-    ###   MODIFY THIS   ###
     def __repr__(self):
         """Show info about the user."""
         
@@ -295,7 +291,7 @@ class User(db.Model):
 
 
     @classmethod
-    def signup(cls, username, password):
+    def signup(cls, username, password, calorie_need=None, calorie_limit=None):
         """
         Signup user.
         Hashes password and adds user to the system.
@@ -306,7 +302,9 @@ class User(db.Model):
 
         user = User(
             username=username,
-            password=hashed_pwd
+            password=hashed_pwd,
+            calorie_need=calorie_need,
+            calorie_limit=calorie_limit
         )
 
         db.session.add(user)
@@ -332,26 +330,6 @@ class User(db.Model):
 
         return False
     
-
-###########################################################
-# MY FUNCTIONS:
-
-# def find_the_date(DATE_KEY, TODAY, session):
-#     """
-#     IF ANOTHER DATE IS BEING MODIFIED
-#     session[DATE_KEY] HAS IT AS ISO
-#     IF TODAY IS BEING MODIFIED session[DATE_KEY] IS EMPTY
-#     THE_DATE HAS THE DATE HAS BEEN MODIFIED
-#     """
-
-#     if DATE_KEY in session:
-#         return date.fromisoformat(session[DATE_KEY])
-#     else:
-#         return TODAY
-    
-
-
-
 
 ###########################################################
 # DATABASE CONNECTION:

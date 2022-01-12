@@ -14,30 +14,49 @@
     <li>{{ food }}</li>
   {% endfor %}
 </ol>
+      {% endfor %}
 #}
 
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Food Name</th>
-      <th scope="col">Food Brand</th>
-      <th scope="col">Count</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for food in freq_20_foods %}
-    <tr>
-      <th scope="row"><a class="btn btn-primary btn-sm link-button" href="">
-        <span class="text-center">{{ freq_20_foods.index(food) + 1}}</span>
-        </a></th>
-      <td>{{ food[0].name }}</td>
-      <td>{{ food[0].brand }}</td>
-      <td class="text-center">{{ food[1] }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<!-- NO FOOD LOG YET -->
+{% if not freq_20_foods %}
+  <h3 class="m-5 text-center">Nothing eaten yet!</h3>
+
+<!-- THERE IS EATEN SOMETHING -->
+{% else %}
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Food Name</th>
+        <th scope="col">Food Brand</th>
+        <th scope="col">Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for food in freq_20_foods %}
+      <tr>
+        <th scope="row">
+          <form>
+            <button 
+              type="submit"
+              class="btn btn-primary btn-sm link-button" 
+              formaction="/food/add/{{ food[0].id }}">
+              <span class="text-center">
+                {{ freq_20_foods.index(food) + 1}}
+              </span>
+            </button>
+          </form>
+        </th>
+        <td>{{ food[0].name }}</td>
+        <td>{{ food[0].brand }}</td>
+        <td class="text-center">{{ food[1] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endif %}
 
 {#
 <div class="result-pages-navigation mb-3">

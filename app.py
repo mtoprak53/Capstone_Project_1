@@ -12,7 +12,7 @@ from fatsecret import Fatsecret
 
 # MY MODULES
 from forms import UserAddForm, LoginForm
-from models import db, connect_db, Food, FoodInfo, FoodLog, User, UserInfo
+from models import db, connect_db, Food, FoodInfo, FoodLog, User
 
 # SENSITIVE DATA MANAGEMENT
 try:
@@ -40,7 +40,7 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     os.environ.get(
         "DATABASE_URL",    # IF THERE IS AN ENV_VAR
-        "postgresql:///calorie_db_2"   # LOCAL VAR
+        "postgresql:///calorie_db"   # LOCAL VAR
     )
 )
 
@@ -144,15 +144,10 @@ def signup():
         try:
             user = User.signup(   # .signup()
                 username=form.username.data,
-                password=form.password.data
-            )
-            db.session.commit()
-            user_info = UserInfo(
-                user_id=user.id,
+                password=form.password.data,
                 calorie_need=form.calorie_need.data,
-                calorie_limit=form.calorie_limit.data                
+                calorie_limit=form.calorie_limit.data
             )
-            db.session.add(user_info)
             db.session.commit()
 
         except IntegrityError as e:
@@ -216,6 +211,9 @@ def homepage():
     THE_DATE = load_the_date()
     print_(THE_DATE)
 
+    calorie_limit = g.user.calorie_limit 
+    calorie_need = g.user.calorie_need
+
     # BUILD THE EATEN LIST IF THERE IS ANY LOG
     if FoodLog.query.filter(
         FoodLog.user_id == g.user.id,
@@ -232,9 +230,6 @@ def homepage():
         calorie_list = [df.calories for df in dates_foodlog]
         calorie_sum = sum(calorie_list)
 
-        calorie_limit = g.user.userinfo[0].calorie_limit 
-        calorie_need = g.user.userinfo[0].calorie_need
-
         return render_template(
             'home.html', 
             user=g.user, 
@@ -247,8 +242,6 @@ def homepage():
         )
 
     calorie_sum = 0
-    calorie_limit = g.user.userinfo[0].calorie_limit 
-    calorie_need = g.user.userinfo[0].calorie_need
 
     return render_template(
         'home.html', 
@@ -290,7 +283,7 @@ def search_food():
 
 @app.route('/food/search/<food>/<int:page_num>')
 def search_food_redirect(food, page_num):
-    """
+    """ Make the Fatsecret API search and return the results
     """
 
     if not logged_in():
@@ -300,14 +293,16 @@ def search_food_redirect(food, page_num):
     TODAY = date.today()
     THE_DATE = load_the_date()
 
-    # FORM THE 10 PAGE LINKS LIST (HIDDEN) ###########
-    if page_num < 5:
-        pages = range(1,10)
-    else:
-        pages = range(page_num-3, page_num+6)
-    ##################################################
-
     max_results = 20
+
+    # SEARCH RESULTS FROM FATSECRET API
+    # ---------------------------------
+    # [{'food_description': '...',
+    #   'food_id': '35718',
+    #   'food_name': 'Apples',
+    #   'food_type': 'Generic',
+    #   'food_url': '...'},
+    #  { ... }, ... ]
     
     food_list = fs.foods_search(
         food, 
@@ -331,7 +326,7 @@ def search_food_redirect(food, page_num):
         food_list=food_list, 
         search_term=food,
         page_number=page_num,
-        pages=pages, 
+        # pages=pages, 
     )
 
 
