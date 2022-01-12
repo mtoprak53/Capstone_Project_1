@@ -7,16 +7,6 @@
 
 <h1 class="text-center">Most frequent eaten 20 foods</h1>
 
-{# FOOD RESULTS #}
-{#
-<ol>
-  {% for food in freq_20_foods %}
-    <li>{{ food }}</li>
-  {% endfor %}
-</ol>
-      {% endfor %}
-#}
-
 <!-- NO FOOD LOG YET -->
 {% if not freq_20_foods %}
   <h3 class="m-5 text-center">Nothing eaten yet!</h3>
