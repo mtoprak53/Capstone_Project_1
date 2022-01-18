@@ -12,7 +12,7 @@ from fatsecret import Fatsecret
 
 # MY MODULES
 from forms import UserAddForm, LoginForm
-from models import db, connect_db, Food, FoodInfo, FoodLog, User
+from models import db, connect_db, Food, FoodServing, FoodLog, User
 
 # SENSITIVE DATA MANAGEMENT
 try:
@@ -23,16 +23,10 @@ except:
     CONSUMER_KEY = None
     CONSUMER_SECRET = None
 
-# TODAY = date.today()
-
 # CREATE SESSION KEYS
 CURR_USER_KEY = "curr_user"
 DATE_KEY = "the_date"
-# SEARCH_KEY = "search_term"
-# PAGE_NUM_KEY = "page_num"
 FOOD_KEY = "food"
-
-# BASE_URL = "https://platform.fatsecret.com/rest/server.api"
 
 app = Flask(__name__)
 
@@ -40,12 +34,12 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     os.environ.get(
         # "DATABASE_URL",    # IF THERE IS AN ENV_VAR
-        "HEROKU_POSTGRESQL_IVORY_URL",    # LAST DB
+        "HEROKU_POSTGRESQL_IVORY_URL",    # MOST RECENT DB
         "postgresql:///calorie_db"   # LOCAL VAR
     )
 )
 
-# HEROKU FIX
+# HEROKU POSTGRESQL ADDRESS FIX
 app.config["SQLALCHEMY_DATABASE_URI"] = app.config["SQLALCHEMY_DATABASE_URI"].replace("postgres://", "postgresql://", 1)
 
 # OTHER CONFIGURATIONS
@@ -69,6 +63,7 @@ CONSUMER_SECRET = os.environ.get(
 )
 
 fs = Fatsecret(CONSUMER_KEY, CONSUMER_SECRET)
+# BASE_URL = "https://platform.fatsecret.com/rest/server.api"
 
 # db.drop_all()
 db.create_all()
@@ -78,7 +73,7 @@ db.create_all()
 # User signup/login/logout
 
 @app.before_request
-def add_user_to_g():   # WHERE IS THIS USED?
+def add_user_to_g():
     """If we're logged in, add curr_user to Flask global."""
 
     if CURR_USER_KEY in session:
@@ -113,18 +108,33 @@ def save_(the_date):
 
 
 def logged_in():
-    print("check login")
+    print("#"*30)
+    print(">"*5, "   LOGIN CHECK:")
     if session.get(CURR_USER_KEY):
+        print(">"*5, "   USER IS LOGGED IN!")
+        print("#"*30)
         return True
+    print(">"*5, "   NO LOGGED IN USER!")
+    print("#"*30)
     return False
 
 
 def print_(date):
-    """Print todays date in bash"""
+    """Print todays date on terminal"""
     
     print("#"*30)
     print(f"'/home' TODAY => {date} - {type(date)}")
     print("#"*30)
+
+
+def yaz(item):
+    """Print the item on terminal"""
+    
+    print("#"*30)
+    # print(f"'/home' TODAY => {date} - {type(date)}")
+    print(">"*5, "    ", item)
+    print("#"*30)
+
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
@@ -141,9 +151,9 @@ def signup():
 
     form = UserAddForm()
 
-    if form.validate_on_submit():   # .validate_on_submit()
+    if form.validate_on_submit():
         try:
-            user = User.signup(   # .signup()
+            user = User.signup(
                 username=form.username.data,
                 password=form.password.data,
                 calorie_need=form.calorie_need.data,
@@ -155,7 +165,7 @@ def signup():
             flash("Username already taken", 'danger')
             return render_template('signup.html', form=form)
         
-        do_login(user)   # do_login()
+        do_login(user)
 
         return redirect('/')
     
@@ -169,14 +179,14 @@ def login():
 
     form = LoginForm()
 
-    if form.validate_on_submit():   # .validate_on_submit()
-        user = User.authenticate(   # .authenticate()
+    if form.validate_on_submit():
+        user = User.authenticate(
             form.username.data,
             form.password.data
         )
 
         if user:
-            do_login(user)   # do_login()
+            do_login(user)
             flash(f"Hello, {user.username}!", 'success')
             return redirect('/')
 
@@ -189,7 +199,7 @@ def login():
 def logout():
     """Handle logout of user."""
 
-    do_logout()   # do_logout
+    do_logout()
 
     flash("You have successfully logged out.", 'success')
     return redirect("/login")
@@ -212,46 +222,22 @@ def homepage():
     THE_DATE = load_the_date()
     print_(THE_DATE)
 
-    calorie_limit = g.user.calorie_limit 
-    calorie_need = g.user.calorie_need
-
-    # BUILD THE EATEN LIST IF THERE IS ANY LOG
-    if FoodLog.query.filter(
-        FoodLog.user_id == g.user.id,
-        FoodLog.date == THE_DATE
-    ).count() > 0:
-        dates_foodlog = FoodLog.query.filter(
-                        FoodLog.user_id == g.user.id,
-                        FoodLog.date == THE_DATE
-                    ).all()
-
-        for df in dates_foodlog:
+    # USER'S FOODLOG FOR THE DAY (flud)
+    flud = FoodLog.query.filter(FoodLog.user_id == g.user.id,
+                                FoodLog.date == THE_DATE)
+    calorie_list = []
+    if flud.count() > 0:
+        for df in flud.all():
             df.calories = round(df.calories)
-
-        calorie_list = [df.calories for df in dates_foodlog]
-        calorie_sum = sum(calorie_list)
-
-        return render_template(
-            'home.html', 
-            user=g.user, 
-            today=TODAY, 
-            the_date=THE_DATE, 
-            foodlog=dates_foodlog,
-            calorie_sum=calorie_sum,
-            calorie_limit=calorie_limit,
-            calorie_need=calorie_need,
-        )
-
-    calorie_sum = 0
+        calorie_list = [df.calories for df in flud.all()]
 
     return render_template(
         'home.html', 
         user=g.user, 
-        today=TODAY,
+        today=TODAY, 
         the_date=THE_DATE, 
-        calorie_sum=calorie_sum,
-        calorie_limit=calorie_limit,
-        calorie_need=calorie_need,
+        foodlog=flud.all(),
+        calorie_sum=sum(calorie_list)
     )
 
 
@@ -266,16 +252,17 @@ def search_food():
     THE_DATE = load_the_date()
 
     food = request.form["food"]
+    
     try:
         food_list = fs.foods_search(food)
 
     except:
         return render_template(
-            '/errors/food.html', 
+            '/errors/search.html', 
             user=g.user, 
             today=TODAY, 
             the_date=THE_DATE, 
-            search_term=food, 
+            search_term=food
         )
 
     else:
@@ -295,21 +282,29 @@ def search_food_redirect(food, page_num):
     THE_DATE = load_the_date()
 
     max_results = 20
+    last_page = False
 
     # SEARCH RESULTS FROM FATSECRET API
     # ---------------------------------
-    # [{'food_description': '...',
-    #   'food_id': '35718',
-    #   'food_name': 'Apples',
-    #   'food_type': 'Generic',
-    #   'food_url': '...'},
+    # ['brand_name': 'Great Value',  ==>>  //   NO BRAND NAME WHEN food_type IS 'Generic'
+    #  'food_description': 'Per 3 pieces - Calories: 130kcal | Fat: 0.00g | Carbs: 33.00g | Protein: 0.00g',
+    #  'food_id': '3305099',
+    #  'food_name': 'Orange Slices',
+    #  'food_type': 'Brand',
+    #  'food_url': 'https://www.fatsecret.com/calories-nutrition/great-value/orange-slices'},
     #  { ... }, ... ]
     
-    food_list = fs.foods_search(
-        food, 
-        page_number=page_num, 
-        max_results=max_results
-    )
+    food_list = fs.foods_search(food,
+                                page_number=page_num,
+                                max_results=max_results)
+
+    try:
+        fs.foods_search(food,
+                        page_number=page_num+1,
+                        max_results=max_results)
+
+    except:
+        last_page = True
 
     try:
         # MANY RESULTS
@@ -327,7 +322,7 @@ def search_food_redirect(food, page_num):
         food_list=food_list, 
         search_term=food,
         page_number=page_num,
-        # pages=pages, 
+        last_page=last_page
     )
 
 
@@ -349,16 +344,12 @@ def add_food(food_id):
         amount = float(request.form["amount"])
         servings = request.form["servings"]
         foodinfo = session[FOOD_KEY]
+        yaz(foodinfo)
         food_id = int(foodinfo['food_id'])
 
-        # DATABASE REGISTERING OF FOOD & ITS INFO #
-        # IF THE FOOD IS ALREADY IN DATABASE
-        if Food.query.get(food_id):
-            pass
-
-        # IF THE FOOD IS NOT IN DATABASE YET
-        else:
-            brand = foodinfo.get('brand_name') if foodinfo.get('brand_name') else "Generic"
+        # DATABASE REGISTERING OF FOOD & ITS INFO
+        if not Food.query.get(food_id):
+            brand = foodinfo.get('brand_name') or "Generic"
 
             food = Food(
                 id=food_id,
@@ -376,7 +367,7 @@ def add_food(food_id):
             try:
                 # ONE SERVING
                 serv.get('fat')
-                food_info = FoodInfo(food_id=food_id, **serv)
+                food_info = FoodServing(food_id=food_id, **serv)
             
                 db.session.add(food_info)
                 db.session.commit()
@@ -384,16 +375,16 @@ def add_food(food_id):
             except:
                 # LIST SERVING
                 for s in serv:
-                    food_info = FoodInfo(food_id=food_id, **s)
+                    food_info = FoodServing(food_id=food_id, **s)
 
                     db.session.add(food_info)
                     db.session.commit()
         
         # SEND FOOD-LOG TO DATABASE
         try:
-            foodinfo_0 = FoodInfo.query.filter(
-                FoodInfo.food_id == food_id,
-                FoodInfo.serving_description == servings
+            foodinfo_0 = FoodServing.query.filter(
+                FoodServing.food_id == food_id,
+                FoodServing.serving_description == servings
             ).one()
         except:
             return render_template(
@@ -523,11 +514,9 @@ def delete_food(log_id):
     return redirect('/home')
 
 
-### UNDER CONSTRUCTION ###
-# ---------------------- #
 @app.route('/food/frequent')
 def frequent_foods():
-    """
+    """It lists user's most frequent eaten 20 foods by frequency
     """
 
     # CHECK IF THE USER LOGGED IN
@@ -538,43 +527,25 @@ def frequent_foods():
     TODAY = date.today()
     THE_DATE = load_the_date()
 
-    # USER'S ALL FOOD-LOGS
-    # all_logs = FoodLog.query.filter_by(user_id=g.user.id).group_by(food_id).order_by(func.count().desc(), date.desc()).limit(20).all()
-
-    freq_20_foods = (db.session.query(Food, db.func.count(FoodLog.food_id))
-                                .join(FoodLog)
-                                .filter_by(user_id=g.user.id)
-                                .group_by(Food.id)
-                                .order_by(db.func.count(FoodLog.food_id).desc())
-                                .limit(20)
-                                .all())
-
-
-    # # FOOD-IDs OF USER'S FOOD-LOGS
-    # food_ids = [log.food_id for log in all_logs]
-    # fid_set = set(food_ids)
-
-    # # (FOOD-ID, FREQUENCY) TUPLES LIST
-    # food_freq = [(fid, FoodLog.query.filter(FoodLog.user_id==g.user.id, FoodLog.food_id==fid).count()) for fid in fid_set]
-
-    # # REVERSE SORTED (FOOD-ID, FREQUENCY) TUPLES LIST
-    # ffs = sorted(food_freq, key=lambda x: x[1], reverse=True)
-
-    # fids20 = [t[0] for t in ffs[:20]]
-
-    # # fidlogs = 
-
-    # foodlogs = [FoodLog.query.filter(FoodLog.user_id==g.user.id, FoodLog.food_id==fid).all() for fid in fids20]
+    freq_20_foods = (
+        db.session.query(
+            Food, db.func.count(FoodLog.food_id))
+                         .join(FoodLog)
+                         .filter_by(user_id=g.user.id)
+                         .group_by(Food.id)
+                         .order_by(db.func.count(FoodLog.food_id)
+                                          .desc())
+                         .limit(20)
+                         .all()
+    )
 
     return render_template(
         '/foods/frequent.html',
         user=g.user, 
         today=TODAY,
         the_date=THE_DATE,
-        # foodlogs=foodlogs,
         freq_20_foods=freq_20_foods,
     )
-
 
 
 @app.route('/calendar', methods=["GET", "POST"])
@@ -653,10 +624,6 @@ def change_day(direction, days):
 
 
 ####################################################################################
-# 
-
-
-####################################################################################
 # Homepage and error pages
 
 
@@ -696,20 +663,3 @@ def show_test():
     print("#"*30)
 
     return "X"
-
-
-####################################################################################
-# Turn off all caching in Flask
-#   (useful for dev; in production, this kind of stuff is typically handled elsewhere)
-#
-# https://stackoverflow.com/questions/34066804/disabling-caching-in-flask
-
-# @app.after_request
-# def add_header(req):
-#     """Add non-caching headers on every request."""
-
-#     req.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-#     req.headers["Pragma"] = "no-cache"
-#     req.headers["Expires"] = "0"    
-#     req.headers["Cache-Control"] = "public, max-age=0"
-#     return req

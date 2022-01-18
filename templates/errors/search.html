@@ -1,0 +1,14 @@
+{% extends 'base_left.html' %}
+
+{% block right_column %}
+
+<!-- RIGHT COLUMN -->
+<div class="m-3">
+  <h3>API FOOD ERROR</h3>
+
+  <p>There is no result for your search <span class="text-danger">{{ search_term }}</span> in the API.</p>
+  <p>Please try another search.</p>
+
+</div>
+
+{% endblock %}

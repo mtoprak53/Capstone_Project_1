@@ -3,141 +3,138 @@
 {% block right_column %}
 
 <!-- RIGHT COLUMN -->
-<div class="right-col col m-1">
 
-  <!-- DATE NAVIGATION -->
-  <div class="day-nav d-flex justify-content-around mt-2">
-    <a href="/day-change/pre/7">
-      <i class="fas fa-fast-backward"></i>
-    </a>
-    <a href="/day-change/pre/1">
-      <i class="fas fa-step-backward"></i>
-    </a>
-    <a href="/">TODAY</a>
-    <a href="/day-change/post/1">
-      <i class="fas fa-step-forward"></i>
-    </a>
-    <a href="/day-change/post/7">
-      <i class="fas fa-fast-forward"></i>
-    </a>
-  </div>
+<!-- DATE NAVIGATION -->
+<div class="day-nav d-flex justify-content-around mt-2">
+  <a href="/day-change/pre/7">
+    <i class="fas fa-fast-backward fa-lg"></i>
+  </a>
+  <a href="/day-change/pre/1">
+    <i class="fas fa-step-backward fa-lg"></i>
+  </a>
+  <a href="/">TODAY</a>
+  <a href="/day-change/post/1">
+    <i class="fas fa-step-forward fa-lg"></i>
+  </a>
+  <a href="/day-change/post/7">
+    <i class="fas fa-fast-forward fa-lg"></i>
+  </a>
+</div>
 
-  <!-- DATE INFO -->
-  <div class="date mt-2 text-center">
-    <h3>
-      The List of 
-      {{ the_date.strftime("%B ") }}    
-      {% if the_date.day in (1, 21, 31) %}
-        {{ the_date.day }}<sup>st</sup>
-      {% elif the_date.day in (2, 22) %}
-        {{ the_date.day }}<sup>nd</sup>
-        {% elif the_date.day in (3, 23) %}
-          {{ the_date.day }}<sup>rd</sup>
-      {% else %}
-        {{ the_date.day }}<sup>th</sup>
-      {% endif %}
-      {{ the_date.strftime("%Y / %A") }}
-    </h3>
-  </div>
-
-  <!-- EATEN LIST -->
-  <div class="eaten-list-div mt-2">
-
-    <!-- TOTALS -->
-    <div class="totals mt-2 mx-2 d-flex justify-content-around">
-      <span class="text-center">
-        <p>Daily Need: 
-          <span class="text-danger">
-            {{ calorie_need }}
-          </span>
-        </p>
-      </span>
-      <span class="text-center">
-        <p>Daily Limit: 
-          <span class="text-danger">
-            {{ calorie_limit }}
-          </span>
-        </p>
-      </span>
-      <span class="text-center">
-        <p>Consumed: 
-          <span class="text-danger">
-            {{ calorie_sum }}
-          </span>
-        </p>
-      </span>
-      <span class="text-center">
-        <p>Left for Limit: 
-          <span class="text-danger">
-            {{ calorie_limit - calorie_sum }}
-          </span>
-        </p>
-      </span>
-      <span class="text-center">
-        <p>Left for Need: 
-          <span class="text-danger">
-            {{ calorie_need - calorie_sum }}
-          </span>
-        </p>
-      </span>
-    </div>
-
-    <!-- NO FOOD LOG YET -->
-    {% if not foodlog %}
-      <h3 class="m-5 text-center">Nothing eaten this day!</h3>
-
-    <!-- THERE IS EATEN SOMETHING -->
+<!-- DATE INFO -->
+<div class="date mt-2 text-center">
+  <h3>
+    The List of 
+    {{ the_date.strftime("%B ") }}    
+    {% if the_date.day in (1, 21, 31) %}
+      {{ the_date.day }}<sup>st</sup>
+    {% elif the_date.day in (2, 22) %}
+      {{ the_date.day }}<sup>nd</sup>
+      {% elif the_date.day in (3, 23) %}
+        {{ the_date.day }}<sup>rd</sup>
     {% else %}
-
-      <!-- TABLE -->
-      <form>
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">&nbsp&nbspFOOD&nbsp&nbsp</th>
-              <th scope="col">BRAND</th>
-              <th scope="col">AMNT</th>
-              <th scope="col">&nbsp&nbspUNIT&nbsp&nbsp</th>
-              <th scope="col">KCAL</th>
-              <th scope="col">CHANGE</th>
-            </tr>
-          </thead>
-          <tbody>
-
-            <!-- EATEN LIST CONSTRUCTOR FOR LOOP -->
-            {% for item in foodlog %}
-            <tr>
-              <th scope="row">{{ foodlog.index(item) + 1}}</th>
-              <td>{{ item.food.name }}</td>
-              <td>{{ item.food.brand }}</td>
-              <td>{{ item.amount }}</td>
-              {% if item.serving_description == '100 g' %}
-                <td>grams</td>
-              {% else %}
-                <td>{{ item.serving_description }}</td>
-              {% endif %}
-              <td>{{ item.calories }}</td>
-              <td>
-                <button class="btn btn-sm btn-outline-primary"
-                        formmethod="GET"
-                        formaction="food/log/{{ item.id }}/edit">E
-                </button>
-                <button class="btn btn-sm btn-outline-danger"
-                        formmethod="POST"
-                        formaction="food/log/{{ item.id }}/delete">X
-                </button>
-              </td>
-            </tr>
-            {% endfor %}
-            
-          </tbody>
-        </table>
-      </form>
-
+      {{ the_date.day }}<sup>th</sup>
     {% endif %}
+    {{ the_date.strftime("%Y / %A") }}
+  </h3>
+</div>
 
+<!-- EATEN LIST -->
+<div class="eaten-list-div mt-2">
+
+  <!-- TOTALS -->
+  <div class="totals mt-2 mx-2 d-flex justify-content-around">
+    <span class="text-center">
+      <p>Daily Need: 
+        <span class="text-danger">
+          {{ user.calorie_need }}
+        </span>
+      </p>
+    </span>
+    <span class="text-center">
+      <p>Daily Limit: 
+        <span class="text-danger">
+          {{ user.calorie_limit }}
+        </span>
+      </p>
+    </span>
+    <span class="text-center">
+      <p>Consumed: 
+        <span class="text-danger">
+          {{ calorie_sum }}
+        </span>
+      </p>
+    </span>
+    <span class="text-center">
+      <p>Left for Limit: 
+        <span class="text-danger">
+          {{ user.calorie_limit - calorie_sum }}
+        </span>
+      </p>
+    </span>
+    <span class="text-center">
+      <p>Left for Need: 
+        <span class="text-danger">
+          {{ user.calorie_need - calorie_sum }}
+        </span>
+      </p>
+    </span>
   </div>
+
+  <!-- NO FOOD LOG YET -->
+  {% if not foodlog %}
+    <h3 class="m-5 text-center">Nothing eaten this day!</h3>
+
+  <!-- THERE IS EATEN SOMETHING -->
+  {% else %}
+
+    <!-- TABLE -->
+    <form>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">&nbsp&nbspFOOD&nbsp&nbsp</th>
+            <th scope="col">BRAND</th>
+            <th scope="col">AMNT</th>
+            <th scope="col">&nbsp&nbspUNIT&nbsp&nbsp</th>
+            <th scope="col">KCAL</th>
+            <th scope="col">CHANGE</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- EATEN LIST CONSTRUCTOR FOR LOOP -->
+          {% for item in foodlog %}
+          <tr>
+            <th scope="row">{{ foodlog.index(item) + 1}}</th>
+            <td>{{ item.food.name }}</td>
+            <td>{{ item.food.brand }}</td>
+            <td>{{ item.amount }}</td>
+            {% if item.serving_description == '100 g' %}
+              <td>grams</td>
+            {% else %}
+              <td>{{ item.serving_description }}</td>
+            {% endif %}
+            <td>{{ item.calories }}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary"
+                      formmethod="GET"
+                      formaction="food/log/{{ item.id }}/edit">E
+              </button>
+              <button class="btn btn-sm btn-outline-danger"
+                      formmethod="POST"
+                      formaction="food/log/{{ item.id }}/delete">X
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+          
+        </tbody>
+      </table>
+    </form>
+
+  {% endif %}
 
 </div>
 

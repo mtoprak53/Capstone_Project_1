@@ -14,6 +14,11 @@ td, th {
   margin: 10px;
 }
 
+.fade {
+  /* opacity: 0.9; */
+  color: lightskyblue;
+}
+
 .btn {
   /* background-color: none; */
 }

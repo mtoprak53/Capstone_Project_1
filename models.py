@@ -14,7 +14,7 @@ bcrypt = Bcrypt()
 class FoodLog(db.Model):
     """Each food consumption entry."""
 
-    __tablename__ = 'foodlogs'
+    __tablename__ = 'food_logs'
 
     id = db.Column(
         db.Integer,
@@ -57,9 +57,9 @@ class FoodLog(db.Model):
         default=date.today().isoformat()
     )
 
-    user = db.relationship('User', backref='foodlog')
+    user = db.relationship('User', backref='food_log')
 
-    food = db.relationship('Food', backref='foodlog')
+    food = db.relationship('Food', backref='food_log')
 
 
 class Food(db.Model):
@@ -94,126 +94,134 @@ class Food(db.Model):
         return f"Food Name: {self.name} | Type: {self.brand}"
 
 
-class FoodInfo(db.Model):
-    """Food servings."""
+class FoodServing(db.Model):
+    """Food servings information received from Fatsecret API"""
 
-    __tablename__ = 'foodinfos'
+    __tablename__ = 'food_servings'
+
+    #############################
+    # SERVING INFORMATION
 
     # 01
     food_id = db.Column(
         db.Integer,
-        db.ForeignKey('foods.id', ondelete="cascade"),
-        primary_key=True
+        db.ForeignKey('foods.id', ondelete="cascade")
     )
-
+    
     # 02
-    calcium = db.Column(
-        db.String,
-    )
-
-    # 03
-    calories = db.Column(
-        db.Float,
-    )
-
-    # 04
-    carbohydrate = db.Column(
-        db.Float,
-    )
-
-    # 05
-    cholesterol = db.Column(
-        db.Float,
-    )
-
-    # 06
-    fat = db.Column(
-        db.Float,
-    )
-
-    # 07
-    fiber = db.Column(
-        db.Float,
-    )
-
-    # 08
-    iron = db.Column(
-        db.Float,
-    )
-
-    # 09
-    measurement_description = db.Column(
-        db.String,
-    )
-
-    # 10
-    metric_serving_amount = db.Column(
-        db.String,
-    )
-
-    # 11
-    metric_serving_unit = db.Column(
-        db.String,
-    )
-
-    # 12
-    monounsaturated_fat = db.Column(
-        db.Float,
-    )
-
-    # 13
-    number_of_units = db.Column(
-        db.String,
-    )
-
-    # 14
-    polyunsaturated_fat = db.Column(
-        db.Float,
-    )
-
-    # 15
-    potassium = db.Column(
-        db.Float,
-    )
-
-    # 16
-    protein = db.Column(
-        db.Float,
-    )
-
-    # 17
-    saturated_fat = db.Column(
-        db.Float,
-    )
-
-    # 18
-    serving_description = db.Column(
-        db.String,
+    serving_id = db.Column(
+        db.Integer,
         primary_key=True,
     )
 
-    # 19
-    serving_id = db.Column(
+    # 03
+    serving_description = db.Column(
         db.String,
     )
 
-    # 20
+    # 04
     serving_url = db.Column(
         db.String,
     )
 
-    # 21
-    sodium = db.Column(
+    #############################
+    # MEASUREMENT INFORMATION
+
+    # 05
+    measurement_description = db.Column(
+        db.String,
+    )
+
+    # 06
+    metric_serving_amount = db.Column(
+        db.String,
+    )
+
+    # 07
+    metric_serving_unit = db.Column(
+        db.String,
+    )
+
+    # 08
+    number_of_units = db.Column(
+        db.String,
+    )
+
+    #############################
+    # NUTRIENT INFORMATION
+
+    # 09
+    calories = db.Column(
         db.Float,
     )
 
-    # 22
+    # 10
+    carbohydrate = db.Column(
+        db.Float,
+    )
+
+    # 11
     sugar = db.Column(
         db.Float,
     )
 
-    # 23
+    # 12
+    fiber = db.Column(
+        db.Float,
+    )
+
+    # 13
+    fat = db.Column(
+        db.Float,
+    )
+
+    # 14
+    protein = db.Column(
+        db.Float,
+    )
+
+    # 15
     trans_fat = db.Column(
+        db.Float,
+    )
+
+    # 16
+    calcium = db.Column(
+        db.String,
+    )
+
+    # 17
+    cholesterol = db.Column(
+        db.Float,
+    )
+
+    # 18
+    iron = db.Column(
+        db.Float,
+    )
+
+    # 19
+    monounsaturated_fat = db.Column(
+        db.Float,
+    )
+
+    # 20
+    polyunsaturated_fat = db.Column(
+        db.Float,
+    )
+
+    # 21
+    potassium = db.Column(
+        db.Float,
+    )
+
+    # 22
+    saturated_fat = db.Column(
+        db.Float,
+    )
+
+    # 23
+    sodium = db.Column(
         db.Float,
     )
 
@@ -227,29 +235,16 @@ class FoodInfo(db.Model):
         db.Float,
     )
 
-    foods = db.relationship(
+    # relationships
+    food = db.relationship(
         'Food', 
-        backref='foodinfo',
+        backref='food_serving',
         cascade="all, delete"
     ) 
 
     def __repr__(self):
 
         return f"FoodInfo for Food #{self.food_id} & serving description {self.serving_description} "
-
-
-# class UserInfo(db.Model):
-#     """User details."""
-
-#     __tablename__ = 'userinfos'
-
-#     user_id = db.Column(
-#         db.Integer,
-#         db.ForeignKey('users.id', ondelete='cascade'),
-#         primary_key=True
-#     )
-
-#     user = db.relationship('User', backref="userinfo")
 
 
 class User(db.Model):
@@ -274,12 +269,12 @@ class User(db.Model):
         nullable=False
     )
 
-    calorie_limit = db.Column(
+    calorie_need = db.Column(
         db.Integer,
         nullable=False
     )
 
-    calorie_need = db.Column(
+    calorie_limit = db.Column(
         db.Integer,
         nullable=False
     )
