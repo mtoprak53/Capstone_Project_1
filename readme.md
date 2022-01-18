@@ -6,7 +6,7 @@ Users would be able to create their accounts in the website with a username and 
 
 <!-- The user will be able to create, read, edit, and delete any food entry for any day. The database will contain two tables: [users & food_logs](https://docs.google.com/drawings/d/16HER8Z3KmN-mbUIALi8C0DKeYLNxTHT35uLNohaH2dk/edit?usp=sharing). -->
 
-The user will be able to create, read, edit, and delete any food entry for any day. The database will contain four tables: [foodinfos | foods | foodlogs | users](/static/images/schema.png).
+The user will be able to create, read, edit, and delete any food entry for any day. The database will contain four tables: [users | food_logs | foods | food_servings](/static/images/schema.png).
 
 I used [Fatsecret API](https://platform.fatsecret.com/api/), and [pyfatsecret](https://pyfatsecret.readthedocs.io/en/latest/index.html) library.
 
