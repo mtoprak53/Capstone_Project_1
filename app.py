@@ -33,8 +33,8 @@ app = Flask(__name__)
 # DATABASE CONNECTION
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     os.environ.get(
-        # "DATABASE_URL",    # IF THERE IS AN ENV_VAR
-        "HEROKU_POSTGRESQL_IVORY_URL",    # MOST RECENT DB
+        "DATABASE_URL",    # IF THERE IS AN ENV_VAR
+        # "HEROKU_POSTGRESQL_IVORY_URL",    # MOST RECENT DB
         "postgresql:///calorie_db"   # LOCAL VAR
     )
 )
