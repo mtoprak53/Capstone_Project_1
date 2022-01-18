@@ -66,7 +66,7 @@ fs = Fatsecret(CONSUMER_KEY, CONSUMER_SECRET)
 # BASE_URL = "https://platform.fatsecret.com/rest/server.api"
 
 # db.drop_all()
-db.create_all()
+# db.create_all()
 
 
 ####################################################################################

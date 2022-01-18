@@ -23,12 +23,14 @@ class FoodLog(db.Model):
     
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id', ondelete="cascade")
+        db.ForeignKey('users.id', ondelete="cascade"), 
+        nullable=False
     )
 
     food_id = db.Column(
         db.Integer,
-        db.ForeignKey('foods.id', ondelete="cascade")
+        db.ForeignKey('foods.id', ondelete="cascade"), 
+        nullable=False
     )
 
     amount = db.Column(
@@ -105,7 +107,8 @@ class FoodServing(db.Model):
     # 01
     food_id = db.Column(
         db.Integer,
-        db.ForeignKey('foods.id', ondelete="cascade")
+        db.ForeignKey('foods.id', ondelete="cascade"), 
+        nullable=False
     )
     
     # 02
