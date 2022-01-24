@@ -68,7 +68,7 @@ fs = Fatsecret(CONSUMER_KEY, CONSUMER_SECRET)
 # db.create_all()
 
 
-####################################################################################
+##################################################################
 # User signup/login/logout
 
 @app.before_request
@@ -208,8 +208,8 @@ def logout():
     return redirect("/login")
 
 
-####################################################################################
-# 
+##################################################################
+# ROUTES
 
 @app.route('/home')
 def homepage():
@@ -268,9 +268,6 @@ def search_food():
             the_date=THE_DATE, 
             search_term=food
         )
-
-    # else:
-    #     return redirect(f"/food/search/{food}/{0}")
 
 
 @app.route('/food/search/<food>/<int:page_num>')
@@ -359,9 +356,9 @@ def add_food(food_id):
         # DATABASE REGISTERING OF FOOD & ITS INFO
         try:
             Food.query.filter_by(id=food_id).one()
-            yaz("THE FOOD IS PRESENT IN DB !!")
+            # yaz("THE FOOD IS PRESENT IN DB !!")
         except:
-            yaz("THE FOOD NEEDS TO BE SAVED IN DB !!")
+            # yaz("THE FOOD NEEDS TO BE SAVED IN DB !!")
             brand = foodinfo.get('brand_name') or "Generic"
 
             food = Food(
@@ -565,6 +562,7 @@ def change_date():
     if request.form:
 
         the_date = request.form["chosen_date"]   # STRING
+        # print_(the_date)
         THE_DATE = date.fromisoformat(the_date)  # OBJECT
         save_(THE_DATE)
 
@@ -615,7 +613,7 @@ def change_day(direction, days):
     return redirect('/home')
 
 
-####################################################################################
+##################################################################
 # Homepage and error pages
 
 

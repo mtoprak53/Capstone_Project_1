@@ -301,25 +301,44 @@ class UserViewTestCase(TestCase):
 
     
     # SEARCH FOOD (CONNECTS TO API?)
-    def test_food_add(self):
-        """Can we add foods?"""
+    def test_food_search(self):
+        """Can we search foods?"""
 
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.testuser.id
-                sess[FOOD_KEY] = apple
+                # sess[FOOD_KEY] = apple
                 sess[DATE_KEY] = date.today().isoformat()
 
-            resp = c.post(f"/food/add/{self.food_id}",
-                        data={"amount": 100, 
-            "servings": f"({self.food_id}, {self.serving_id})"},
-            follow_redirects=True)
+            resp = c.post(f"/food/search",
+                        data={"food": apple},
+                        follow_redirects=True)
             
             html = resp.get_data(as_text=True)
 
+            html_part = '<h1>Your Results for <span class="text-primary">'
             self.assertEqual(resp.status_code, 200)
-            self.assertIn(self.food_name, html)
+            self.assertIn(html_part, html)
+
 
     # CHANGE DATE
+    def test_calendar(self):
+        """Can we travel in time?"""
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+                sess[DATE_KEY] = date.today().isoformat()
+
+            resp = c.post(f"/calendar",
+                        data={"chosen_date": "2022-01-05"},
+                        follow_redirects=True)
+            
+            html = resp.get_data(as_text=True)
+            
+            html_part = '<h3>\n    The List of \n    January     \n    \n      5<sup>th</sup>\n    \n    2022 / Wednesday\n  </h3>'
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn(html_part, html)
 
 
