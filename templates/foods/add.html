@@ -26,38 +26,67 @@
 
 <div class="m-3">
 
-  <h4>
+  <h4>{{flag}}
     <span class="text-info">
-      {{ food_info['food_name'] }},             
-      <!-- BRAND OR GENERIC -->
+      {{ food_info['food_name'] }},
+
+      {# BRAND OR GENERIC #}
       {% if food_info['food_type'].lower() == "brand" %}
         {{ food_info['brand_name'] }}
       {% else %}
         {{ food_info['food_type'] }}
       {% endif %}
     </span>
-    has <span class="text-secondary">{{ unit_kcal }} kcals</span> in {{ unit_amount.lower() }}.
+    has 
+    
+    {% if cals %}
+      <span class="text-secondary">{{ cals }} kcals</span> 
+      in 100 g.
+
+    {% else %}
+    <span class="text-secondary">
+      {{ serving_values[0]['calories'] }} kcals
+    </span> 
+    in {{ serving_values[0]['serving_description'].lower() }}.
+    {% endif %}
   </h4>
   
 
   <form action="/food/add/{{ food_info['food_id'] }}" method="POST" id="add-food-form">
+
+    {# AMOUNT INPUT #}
     <input name="amount" 
             type="number" 
             step="0.1"
             min="0.1"
             placeholder="Enter Amount">
 
-    <!-- <label for="serving-select">Choose a serving description:</label> -->
+    {# DROPDOWN MENU #}
     <select name="servings" id="serving-select">
       <option value="" disabled>--Serving--</option>
-      {% for SD in SDs %}
-        {% if SD == '100 g' %}
-          <option value="{{ SD }}" selected>grams</option>
-        {% else %}
-          <option value="{{ SD }}">{{ SD }}</option>
-        {% endif %}
+
+      {% for serving_value in serving_values %}
+
+        
+        <option value="
+        {{ (food_info['food_id'], serving_value['serving_id']) }}
+        ">        
+
+          {% if serving_value['measurement_description'] =='g' %}
+            grams
+          {% else %}  
+            {{ serving_value['measurement_description'] }}
+          {% endif %}
+
+          {# Avoid doubling the gram info #}
+          {% if serving_value['measurement_description'][-2:] not in ('g)', 'g') %}
+            ({{ serving_value['metric_serving_amount'] }}{{ serving_value['metric_serving_unit'] }})
+
+          {% endif %}
+
       {% endfor %}
     </select>
+
 
     <button class="btn btn-sm btn-primary px-3">Add</button>
   </form>    

@@ -3,7 +3,6 @@
 {% block right_column %}
 
 <!-- RIGHT COLUMN -->
-<div class="right-col col">
 
 <h1 class="text-center">Most frequent eaten 20 foods</h1>
 
@@ -47,36 +46,5 @@
   </table>
 
 {% endif %}
-
-{#
-<div class="result-pages-navigation mb-3">
-
-  <!-- PREVIOUS -->
-  <span 
-  class="
-    {% if page_number == 0 %}
-      hidden 
-    {% endif %}
-    mx-3
-  "
-  ><a href="/food/search/{{ search_term }}/{{ page_number - 1 }}">Previous</a></span>
-  
-  <!-- NUMBERED NAVIGATION IS HIDDEN FOR NOW -->
-  {% for page in pages %}
-    <span class="hidden"><a 
-      class="
-        {% if page == page_number + 1 %}
-          font-weight-bold
-        {% endif  %}
-        mx-3
-      "
-      href="/food/search/{{ search_term }}/{{ page - 1 }}">{{ page }}</a></span>
-  {% endfor %}
-  
-  <!-- NEXT -->
-  <span class="mx-3"><a href="/food/search/{{ search_term }}/{{ page_number + 1 }}">Next</a></span>
-
-</div>
-#}
 
 {% endblock %}

@@ -1,5 +1,5 @@
 # PYTHON MODULES
-import os
+import os, ast
 from datetime import date, timedelta
 
 # FLASK MODULES
@@ -34,7 +34,6 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     os.environ.get(
         "DATABASE_URL",    # IF THERE IS AN ENV_VAR
-        # "HEROKU_POSTGRESQL_IVORY_URL",    # MOST RECENT DB
         "postgresql:///calorie_db"   # LOCAL VAR
     )
 )
@@ -108,14 +107,18 @@ def save_(the_date):
 
 
 def logged_in():
-    print("#"*30)
-    print(">"*5, "   LOGIN CHECK:")
+    # print("#"*30)
+    # print(">"*5, "   LOGIN CHECK:")
     if session.get(CURR_USER_KEY):
-        print(">"*5, "   USER IS LOGGED IN!")
-        print("#"*30)
-        return True
-    print(">"*5, "   NO LOGGED IN USER!")
-    print("#"*30)
+        if g.user and g.user.id == session[CURR_USER_KEY]:
+            # if g.user.id == session[CURR_USER_KEY]:
+                # print(">"*5, "   USER IS LOGGED IN!")
+                # print("#"*30)
+            return True
+        else:
+            del session[CURR_USER_KEY]
+    # print(">"*5, "   NO LOGGED IN USER!")
+    # print("#"*30)
     return False
 
 
@@ -123,7 +126,7 @@ def print_(date):
     """Print todays date on terminal"""
     
     print("#"*30)
-    print(f"'/home' TODAY => {date} - {type(date)}")
+    print(f"'/home' date => {date} - {type(date)}")
     print("#"*30)
 
 
@@ -216,11 +219,11 @@ def homepage():
         return redirect('/')
     
     TODAY = date.today()
-    print_(TODAY)
+    # print_(TODAY)
 
     # FIND OUT THE DATE
     THE_DATE = load_the_date()
-    print_(THE_DATE)
+    # print_(THE_DATE)
 
     # USER'S FOODLOG FOR THE DAY (flud)
     flud = FoodLog.query.filter(FoodLog.user_id == g.user.id,
@@ -255,6 +258,7 @@ def search_food():
     
     try:
         food_list = fs.foods_search(food)
+        return redirect(f"/food/search/{food}/{0}")
 
     except:
         return render_template(
@@ -265,8 +269,8 @@ def search_food():
             search_term=food
         )
 
-    else:
-        return redirect(f"/food/search/{food}/{0}")
+    # else:
+    #     return redirect(f"/food/search/{food}/{0}")
 
 
 @app.route('/food/search/<food>/<int:page_num>')
@@ -333,22 +337,31 @@ def add_food(food_id):
 
     if not logged_in():
         return redirect('/')
-    
+
     # FIND OUT THE DATE
     TODAY = date.today()
     THE_DATE = load_the_date()
 
     # POST
     if request.form:
-    
+
         amount = float(request.form["amount"])
-        servings = request.form["servings"]
-        foodinfo = session[FOOD_KEY]
-        yaz(foodinfo)
-        food_id = int(foodinfo['food_id'])
+        servings_str = request.form["servings"]
+
+        # string to tuple conversion
+        food_id, serving_id = ast.literal_eval(servings_str.strip())
+
+        food_id = int(food_id)
+
+        foodinfo = session[FOOD_KEY] 
+        serv = foodinfo['servings']['serving']
 
         # DATABASE REGISTERING OF FOOD & ITS INFO
-        if not Food.query.get(food_id):
+        try:
+            Food.query.filter_by(id=food_id).one()
+            yaz("THE FOOD IS PRESENT IN DB !!")
+        except:
+            yaz("THE FOOD NEEDS TO BE SAVED IN DB !!")
             brand = foodinfo.get('brand_name') or "Generic"
 
             food = Food(
@@ -361,108 +374,96 @@ def add_food(food_id):
             db.session.add(food)
             db.session.commit()
 
-            serv = foodinfo['servings']['serving']
-
             # SEND FOOD INFO TO LOCAL DATABASE
             try:
                 # ONE SERVING
                 serv.get('fat')
                 food_info = FoodServing(food_id=food_id, **serv)
-            
                 db.session.add(food_info)
-                db.session.commit()
 
             except:
                 # LIST SERVING
                 for s in serv:
                     food_info = FoodServing(food_id=food_id, **s)
-
                     db.session.add(food_info)
-                    db.session.commit()
-        
+
+            db.session.commit()
+
         # SEND FOOD-LOG TO DATABASE
         try:
-            foodinfo_0 = FoodServing.query.filter(
-                FoodServing.food_id == food_id,
-                FoodServing.serving_description == servings
-            ).one()
-        except:
+            serving_info = FoodServing.query.filter_by(serving_id=serving_id).one()
+
+        except:       
             return render_template(
                         '/errors/database.html', 
                         user=g.user, 
                         today=TODAY,
                         the_date=THE_DATE, 
                     )
+        
+        number_of_units = [float(s['number_of_units']) for s in serv if s['serving_id'] == str(serving_id)][0]
 
-        unit_calories = foodinfo_0.calories
-        calories = amount * unit_calories
-
-        if servings == '100 g':
-            calories /= 100
+        calories = serving_info.calories * amount / number_of_units
         
         foodlog = FoodLog(
-            date=THE_DATE,
             user_id=g.user.id,
             food_id=food_id,
-            amount=amount,
-            serving_description=servings, 
-            unit_calories=unit_calories,
+            serving_id=serving_info.serving_id,
+            serving_description=serving_info.serving_description,
+            unit_calories=serving_info.calories,
+            amount=amount, 
+            number_of_units=number_of_units,
             calories=calories,
+            date=THE_DATE,
         )
 
         db.session.add(foodlog)
         db.session.commit()
 
         return redirect('/home')
-
-
+    
     # GET REQUEST PART ###
     # --------------------
     food_info = fs.food_get(food_id)
-    serving_val = food_info['servings']['serving']
-    is_it_list = isinstance(serving_val, list)
 
-    # IF THERE IS A LIST OF SERVINGS
-    if is_it_list:
-
-        SDs = []
-        for serv in serving_val:
-
-            SDs.append(serv['serving_description'])
-
-            if serv['serving_description'] == '100 g':
-                unit_amount = serv['serving_description']
-                unit_kcal = serv['calories']
-
-    # IF THERE IS ONLY ONE SERVING
-    else:
-        SDs = [serving_val['serving_description']]
-        unit_amount = serving_val['serving_description']
-        unit_kcal = serving_val['calories']
-
+    # save food_info in session for global access
     session[FOOD_KEY] = food_info
+
+    serving_values = food_info['servings']['serving']
+    
+    # make serving_values a list if it is only one item
+    try:
+        serving_values[0]
+    except:
+        serving_values = [serving_values]
+    
+    # give priority to 'gram measurement'
+    cals = False
+    for val in serving_values:
+        if val['serving_description'] == '100 g':
+            cals = val['calories']
+        val['metric_serving_amount'] = str(int(round(float(val['metric_serving_amount']))))
 
     return render_template(
         '/foods/add.html', 
         user=g.user, 
         today=TODAY, 
         the_date=THE_DATE,
-        SDs=SDs, 
-        unit_kcal=unit_kcal, 
-        unit_amount=unit_amount.upper(), 
-        food_info=food_info, 
+        serving_values=serving_values,
+        food_info=food_info,
+        cals=cals
     )
 
 
-@app.route('/food/log/<int:log_id>/edit', methods=["GET", "POST"])
+@app.route('/food/edit/<int:log_id>', methods=["GET", "POST"])
 def edit_food(log_id):
     """
     """
 
     # CHECK IF THE USER LOGGED IN
-    if not session.get(CURR_USER_KEY):
+    if not logged_in():
         return redirect('/')
-
+    
     # FIND OUT THE DATE
     TODAY = date.today()
     THE_DATE = load_the_date()
@@ -473,10 +474,10 @@ def edit_food(log_id):
 
         log = FoodLog.query.get_or_404(log_id)
         log.amount = amount
-        log.calories = log.amount * log.unit_calories
+        log.calories = log.amount * log.unit_calories / log.number_of_units
 
-        if log.serving_description == '100 g':
-            log.calories /= 100
+        # if log.serving_description == '100 g':
+        #     log.calories /= 100
 
         db.session.commit()
 
@@ -495,7 +496,7 @@ def edit_food(log_id):
             )
 
 
-@app.route('/food/log/<int:log_id>/delete', methods=["POST"])
+@app.route('/food/delete/<int:log_id>', methods=["POST"])
 def delete_food(log_id):
     """
     """
@@ -587,18 +588,12 @@ def change_day(direction, days):
 
     # FIND OUT THE DATE
     TODAY = date.today()
-
-    # BASH PRINT TEST
-    print("#"*30)
-    print(f"'/day-change' TODAY => {TODAY} - {type(TODAY)}")
-    print("#"*30)
+    
+    # print_(TODAY)   # prints to terminal
 
     THE_DATE = load_the_date()
-
-    # BASH PRINT TEST
-    print("#"*30)
-    print(f"'/day-change' THE_DATE (start) => {THE_DATE} - {type(THE_DATE)}")
-    print("#"*30)
+    
+    # print_(THE_DATE)   # prints to terminal
 
     t1 = timedelta(days)
     if direction == 'post':
@@ -614,11 +609,8 @@ def change_day(direction, days):
         )
 
     save_(THE_DATE)
-
-    # BASH PRINT TEST
-    print("#"*30)
-    print(f"'/day-change' THE_DATE (end) => {THE_DATE} - {type(THE_DATE)}")
-    print("#"*30)
+    
+    print_(THE_DATE)   # prints to terminal
 
     return redirect('/home')
 

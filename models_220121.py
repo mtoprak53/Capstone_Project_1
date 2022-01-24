@@ -33,31 +33,18 @@ class FoodLog(db.Model):
         nullable=False
     )
 
-    serving_id = db.Column(
-        db.Integer,
-        db.ForeignKey('food_servings.serving_id', ondelete="cascade"),
-        nullable=False
-    )
-    
-    serving_description = db.Column(
-        db.String,
-        # db.ForeignKey('food_servings.serving_description', ondelete="cascade"),
-        nullable=False
-    )
-
-    unit_calories = db.Column(
-        db.Float, 
-        # db.ForeignKey('food_servings.calories', ondelete="cascade"),
-        nullable=False
-    )
-
     amount = db.Column(
         db.Float(1),
         nullable=False
     )
 
-    number_of_units = db.Column(
-        db.Float(1),
+    serving_description = db.Column(
+        db.Text,
+        nullable=False
+    )
+
+    unit_calories = db.Column(
+        db.Float, 
         nullable=False
     )
 
@@ -261,7 +248,7 @@ class FoodServing(db.Model):
 
     def __repr__(self):
 
-        return f"FoodServing for Food #{self.food_id} & serving description {self.serving_description} "
+        return f"FoodInfo for Food #{self.food_id} & serving description {self.serving_description} "
 
 
 class User(db.Model):

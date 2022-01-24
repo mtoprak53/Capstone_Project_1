@@ -9,11 +9,21 @@ from unittest import TestCase, expectedFailure
 
 from models import db, User, Food, FoodLog, FoodServing
 
-# os.environ['DATABASE_URL'] = "postgresql:///calorie_db_test"
-os.environ['HEROKU_POSTGRESQL_IVORY_URL'] = "postgresql:///calorie_db_test"
+os.environ['DATABASE_URL'] = "postgresql:///calorie_db_test"
+# os.environ['HEROKU_POSTGRESQL_IVORY_URL'] = "postgresql:///calorie_db_test"
 
 from app import app
 
+# Make Flask errors be real errors, not HTML pages with error info
+app.config['TESTING'] = True
+
+# This is a bit of hack, but don't use Flask DebugToolbar
+app.config['DEBUG_TB_HOSTS'] =['dont-show-debug-toolbar'] 
+
+# make WTF does not use CSRF for tests 
+app.config['WTF_CSRF_ENABLED'] = False
+
+db.drop_all()
 db.create_all()
 
 
@@ -37,8 +47,16 @@ class UserModelTestCase(TestCase):
     def setUp(self):
         """Create test client, add sample data"""
 
-        db.drop_all()
-        db.create_all()
+        # print(f"user count: {len(User.query.all())}")
+        # print("\nsetUp")
+        # db.session.close()
+        # db.get_engine(app).dispose()
+
+        # WHY THOSE ARE RAISING WARNING
+        # db.drop_all()
+        # db.create_all()
+
+        User.query.delete()
 
         self.client = app.test_client()
 
@@ -52,11 +70,13 @@ class UserModelTestCase(TestCase):
 
     def tearDown(self):
         """Clean up fouled transaction"""
+        # print("tearDown\n")
 
         db.session.rollback()
 
     def test_user_model(self):
         """Does basic model work?"""
+        # print("setUp")
 
         u = User(
             username="test_user",
@@ -69,7 +89,7 @@ class UserModelTestCase(TestCase):
         db.session.commit()
 
         # User should have no foodlogs
-        self.assertEqual(len(u.foodlog), 0)
+        self.assertEqual(len(u.food_log), 0)
 
     def test_user_repr_method(self):
         """Does repr method work as expected?"""
