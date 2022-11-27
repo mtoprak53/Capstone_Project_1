@@ -398,6 +398,19 @@ def add_food(food_id):
                         the_date=THE_DATE, 
                     )
         
+        print("food_id")
+        print(food_id)
+        print("serving_id")
+        print(serving_id)
+        print("serv")
+        print(serv)
+
+        # make serv a list if it is only one item
+        try:
+            serv[0]
+        except:
+            serv = [serv]
+
         number_of_units = [float(s['number_of_units']) for s in serv if s['serving_id'] == str(serving_id)][0]
 
         calories = serving_info.calories * amount / number_of_units
