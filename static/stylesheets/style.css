@@ -1,9 +1,4 @@
 
-/* SCAFFOLDING */
-/* div {
-  border: 1px solid maroon;
-} */
-
 * {
   /* background-color: #ffffdd; */
   /* background-color: #e3f2fd; */
@@ -12,6 +7,44 @@
 
 td, th {
   margin: 10px;
+}
+
+body {
+  background-image: url("../images/background1.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* SCAFFOLDING */
+div.scaff {
+  border: 2px solid maroon;
+}
+
+.transbox {
+  margin: 30px;
+  padding: 20px;
+  background-color: #ffffff;
+  /* border: 1px solid black; */
+  border-radius: 20px;
+  opacity: 0.8;
+}
+
+.transbox p, h1, h2, h3, h4, h5, h6, a, form {
+  /* margin: 5%; */
+  /* font-weight: bold; */
+  color: #000000;
+}
+
+input, select, textarea{
+  color: #000000 !important;
+}
+
+textarea:focus, input:focus {
+  /* color: #000000 !important; */
+}
+
+.bottom-button {
+  border-top: 1px solid #000000a9;
 }
 
 .fade {
@@ -51,6 +84,6 @@ td, th {
   margin: 0 5px;
 }
 
-.greeting, .todays-date, .food-search-form {
+.greeting, .todays-date, .calendar-button, .food-search-form {
   border-bottom: 1px solid lightsteelblue;
 }

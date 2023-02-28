@@ -4,13 +4,13 @@
 
 <div class="container">
 
-  <div class="row">
+  <div class="transbox row">
 
     <!-- LEFT COLUMN -->
     <div class="left-col col-lg-4 m-3">
 
       <div class="greeting m-3">
-        <h1>Welcome back,</h1>
+        <h1>Welcome </h1>
         <h1 class="text-center text-info">{{ user.username }}</h1>
       </div>
 
@@ -30,23 +30,27 @@
             {% else %}
               {{ today.day }}<sup>th</sup>
             {% endif %}
-            {{ today.strftime("%Y / %A") }}
+            <!-- {{ today.strftime("%Y / %A") }} -->
+            {{ today.strftime("%Y") }}
           </span>
         </h4>
-        <div class="row">
-          <div class="col"></div>
-          <div class="col-6 p-0">
-            <a class="btn btn-primary btn-block m-2 text-white"
-                href="/calendar">
-              <!-- GO TO CALENDAR -->
-              <i class="far fa-calendar-alt"></i>
-              <!-- <i class="fas fa-calendar"></i> -->
-            </a>
-          </div>
-          <div class="col"></div>
-        </div>
-
+        <h4 class="text-success">{{ today.strftime("%A") }}</h4>
       </div>
+
+      <div class="calendar-button row m-3 text-center">
+        <h4 class="text-center">Travel in Time</h4>
+        <!-- <div class="col"></div> -->
+        <!-- <div class="col-6 p-0"> -->
+          <a class="btn btn-primary btn-block m-2 text-white"
+              href="/calendar">
+            <!-- GO TO CALENDAR -->
+            <i class="far fa-calendar-alt"></i>
+            <!-- <i class="fas fa-calendar"></i> -->
+          </a>
+        <!-- </div> -->
+        <!-- <div class="col"></div> -->
+      </div>
+
 
       <div class="food-search-form m-3 pb-3">
 
@@ -68,7 +72,7 @@
       
       <div class="freq-button m-3">
         <a href="/food/frequent" class="btn btn-block btn-primary">
-          Most Frequent Eaten 20 Foods
+          Top 20 Foods
         </a>
       </div>
 

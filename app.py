@@ -142,11 +142,8 @@ def yaz(item):
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
     """Handle user signup.
-
     Create new user and add to DB. Redirect to home page.
-
     If form not valid, present form.
-
     If  there already is a user with that username: flash message and re-present the form.
     """
 
@@ -398,6 +395,19 @@ def add_food(food_id):
                         the_date=THE_DATE, 
                     )
         
+        print("food_id")
+        print(food_id)
+        print("serving_id")
+        print(serving_id)
+        print("serv")
+        print(serv)
+
+        # make serv a list if it is only one item
+        try:
+            serv[0]
+        except:
+            serv = [serv]
+
         number_of_units = [float(s['number_of_units']) for s in serv if s['serving_id'] == str(serving_id)][0]
 
         calories = serving_info.calories * amount / number_of_units
@@ -626,7 +636,7 @@ def route():
         save_(THE_DATE)
         return redirect('/home')
     else:
-        return render_template('home-anon.html')
+        return redirect('/login')
 
 
 @app.errorhandler(404)
