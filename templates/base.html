@@ -59,9 +59,11 @@
           <!-- LOGGED IN VISIT -->
           {% else %}
           <li>
-            <a href="/users/{{ g.user.id }}" class="text-secondary font-weight-bold">
+            <a href="/users/{{ g.user.id }}" 
+               class="text-secondary font-weight-bold" 
+               style="pointer-events: none">
               <!-- <img src="{{ g.user.image_url }}" alt="user-pic"> -->
-              <img src="../static/images/börü.png" alt="user-pic">
+              <img src="../static/images/wolf.png" alt="user-pic">
               <span>{{ g.user.username }}</span>
             </a>
           </li>
