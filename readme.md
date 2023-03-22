@@ -15,4 +15,40 @@ The live app is deployed on Heroku servers.
 
 
 
+# How to Build & Deploy
+
+## Create the Python Virtual Environment (venv)
+
+Create the virtual environment in the project directory:
+### $ `python3 -m venv venv`  
+  
+Start the virtual environment:  
+### $ `source venv/bin/activate`  
+
+## Install the Required Packages
+
+Install the pip packages required to run the app, listed in the requirements file:  
+### (venv) $ `pip3 install -r requirements.txt`  
+
+Install the 'psycopg2-binary' package seperately because of its incompatibility with newer python3 versions:  
+### (venv) $ `pip3 install psycopg2-binary`  
+
+## Set up the Database  
+
+Create the database:  
+### (venv) $`createdb calorie_db`  
+
+Create the tables:  
+### (venv) $`python3 seed.py`  
+
+## Check the App  
+
+Start the app:  
+### (venv) $`flask run`  
+
+View it in your browser:  
+### [http://localhost:5000](http://localhost:5000)  
+
+Stop the virtual environment when you finish:  
+### (venv) $`deactivate`  
 
