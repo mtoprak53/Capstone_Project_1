@@ -30,7 +30,9 @@ Start the virtual environment:
 Install the pip packages required to run the app, listed in the requirements file:  
 ### (venv) $ `pip3 install -r requirements.txt`  
 
-Install the 'psycopg2-binary' package seperately because of its incompatibility with newer python3 versions:  
+If you encounter a installation problem with requirements.txt file:  
+Try requirements_noproblem.txt and install the 'psycopg2-binary' package seperately because of its incompatibility with newer python3 versions:  
+### (venv) $ `pip3 install -r requirements_noproblem.txt`  
 ### (venv) $ `pip3 install psycopg2-binary`  
 
 ## Set up the Database  
