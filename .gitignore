@@ -3,6 +3,7 @@ venv/
 __pycache__/
 runtime.txt
 hidden.py
+no_git_info/
 oldies_01/
 redundant/
 requirements1.txt
