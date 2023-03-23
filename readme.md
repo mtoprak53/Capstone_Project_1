@@ -11,8 +11,9 @@ Jinja is used as the template system on the front-end. The
 [pyfatsecret](https://pyfatsecret.readthedocs.io/en/latest/index.html) library is used to overcome too detailed authentication processes of the API communications.
 The live app is deployed on Heroku servers.
 
-[The database schema](/static/images/schema.png) contains four tables.
+[The database schema](/static/images/schema.png) contains four tables.  
 
+![DB Schema](https://github.com/mtoprak53/Capstone_Project_1/blob/main/static/images/schema.png?raw=true)
 
 
 # How to Build & Deploy
