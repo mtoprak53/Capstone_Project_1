@@ -3,23 +3,17 @@
 {% block right_column %}
 
 <!-- RIGHT COLUMN -->
-<div class="row align-items-center">
-  <div class="col"></div>
-  <div class="calendar col-6 mt-5 p-2">
+<div class="row align-items-center justify-content-center">
+  <div class="calendar mt-5 p-2">
     <form action="/calendar" method="POST">
-        <div class="row">
-          <div class="col-8">
+        <div class="form-group">
             <!-- LABEL-FOR INPUT-ID SHOULD MATCH -->
             <label for="chosen_date">DATE</label>
-            <input type="date" name="chosen_date" id="chosen_date">
+            <input type="date" class="form-control" name="chosen_date" id="chosen_date">
             <!-- FLASK GOT THE FORM INPUT BY NAME -->
-          </div>
-          <div class="col">
-            <button type="submit" class="btn btn-primary btn-sm btn-block">GO!</button>
-          </div>
         </div>
+        <button type="submit" class="btn btn-primary">GO!</button>
     </form>
   </div>
-  <div class="col"></div>
 </div>
 {% endblock %}

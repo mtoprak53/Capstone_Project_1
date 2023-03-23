@@ -1,4 +1,10 @@
-from app import db
+from app import app, db
 
-db.drop_all()
-db.create_all()
+
+with app.app_context():
+    db.drop_all()
+    db.create_all()
+
+
+# db.drop_all()
+# db.create_all()

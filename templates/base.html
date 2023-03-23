@@ -8,6 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CALORIE COUNTER</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
   <!-- BOOTSTRAP -->
   <!-- <script src="https://unpkg.com/bootstrap"></script> -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -30,7 +32,7 @@
 <body class="{% block body_class %}{% endblock %}">
 
   <!-- CONTAINER -->
-  <div class="container">
+  <div id="main-div" class="container">
 
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand bg-light">
@@ -80,7 +82,10 @@
     {% endfor %}
 
     <!-- CONTENT -->
-    {% block content %} {# THE CONTENT GOES HERE #} {% endblock %}
+    {% block content %} 
+      {# THE CONTENT GOES HERE #} 
+    {% endblock %}
+
   </div>
 
   <!-- JQUERY / POPPER / BOOTSTRAP / MY JS-->

@@ -142,11 +142,8 @@ def yaz(item):
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
     """Handle user signup.
-
     Create new user and add to DB. Redirect to home page.
-
     If form not valid, present form.
-
     If  there already is a user with that username: flash message and re-present the form.
     """
 
@@ -639,7 +636,7 @@ def route():
         save_(THE_DATE)
         return redirect('/home')
     else:
-        return render_template('home-anon.html')
+        return redirect('/login')
 
 
 @app.errorhandler(404)
