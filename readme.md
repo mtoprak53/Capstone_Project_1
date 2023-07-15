@@ -52,6 +52,15 @@ Start the app:
 View it in your browser:  
 ### [http://localhost:5000](http://localhost:5000)  
 
+
+```%info
+IMPORTANT INFO: For API functionality, a hidden.py file containing working CONSUMER_KEY and CONSUMER_SECRET information from the Fatsecret platform is required. The API functionality can be accessed from the app's website:
+```
+### [https://calorie-counter.up.railway.app](https://calorie-counter.up.railway.app)
+
+
+
 Stop the virtual environment when you finish:  
 ### (venv) $`deactivate`  
+
 
