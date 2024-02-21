@@ -29,17 +29,28 @@ div.scaff {
   opacity: 0.8;
 }
 
-.transbox p, h1, h2, h3, h4, h5, h6, a, form {
+.transbox p, 
+h1, 
+h2, 
+h3, 
+h4, 
+h5, 
+h6, 
+a, 
+form {
   /* margin: 5%; */
   /* font-weight: bold; */
   color: #000000;
 }
 
-input, select, textarea{
+input, 
+select, 
+textarea{
   color: #000000 !important;
 }
 
-textarea:focus, input:focus {
+textarea:focus, 
+input:focus {
   /* color: #000000 !important; */
 }
 
@@ -73,7 +84,9 @@ textarea:focus, input:focus {
   pointer-events: none;
 }
 
-.left-col, .right-col, .calendar {
+.left-col, 
+.right-col, 
+.calendar {
   border: 1px solid turquoise;
   border-radius: 10px;
 }
@@ -84,6 +97,9 @@ textarea:focus, input:focus {
   margin: 0 5px;
 }
 
-.greeting, .todays-date, .calendar-button, .food-search-form {
+.greeting, 
+.todays-date, 
+.calendar-button, 
+.food-search-form {
   border-bottom: 1px solid lightsteelblue;
 }

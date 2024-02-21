@@ -254,7 +254,14 @@ def search_food():
     food = request.form["food"]
     
     try:
+        # print("#"*30)
+        # print(fs)
+        # print(dir(fs))
+        # print(dir(fs.foods_search))
         food_list = fs.foods_search(food)
+        # print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+        # print(food_list)
+        # print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
         return redirect(f"/food/search/{food}/{0}")
 
     except:

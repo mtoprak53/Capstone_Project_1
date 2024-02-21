@@ -59,8 +59,24 @@
           <!-- LOGGED IN VISIT -->
           {% else %}
           <li>
+            <span class="text-success">
+              {{ today.strftime("%B ") }}          
+              {% if today.day in (1, 21, 31) %}
+                {{ today.day }}<sup>st</sup>
+              {% elif today.day in (2, 22) %}
+                {{ today.day }}<sup>nd</sup>
+              {% elif the_date.day in (3, 23) %}
+                {{ the_date.day }}<sup>rd</sup>
+              {% else %}
+                {{ today.day }}<sup>th</sup>
+              {% endif %}
+              <!-- {{ today.strftime("%Y / %A") }} -->
+              {{ today.strftime("%Y") }}
+            </span>            
+          </li>
+          <li>
             <a href="/users/{{ g.user.id }}" 
-               class="text-secondary font-weight-bold" 
+               class="text-secondary font-weight-bold pl-3" 
                style="pointer-events: none">
               <!-- <img src="{{ g.user.image_url }}" alt="user-pic"> -->
               <img src="../static/images/wolf.png" alt="user-pic">
