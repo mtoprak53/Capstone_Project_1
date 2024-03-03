@@ -579,7 +579,7 @@ def change_date():
     if request.form:
 
         the_date = request.form["chosen_date"]   # STRING
-        # print_(the_date)
+        print_(the_date)
         THE_DATE = date.fromisoformat(the_date)  # OBJECT
         save_(THE_DATE)
 
